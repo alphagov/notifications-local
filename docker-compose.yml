@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  api:
+    image: notifications-api
+    build:
+      context: ../notifications-api
+      dockerfile: docker/Dockerfile
+    ports:
+      - "6011:6011"
+    command: ["flask", "run", "--port", "6011", "--host", "0.0.0.0"]
+    environment: &api-environment
+      - NOTIFY_ENVIRONMENT=development
+      - FLASK_ENV=development
+      - MMG_API_KEY=somekey
+      - FIRETEXT_API_KEY=somekey
+      - FLASK_APP=application.py
+      - SQLALCHEMY_DATABASE_URI=postgresql://notify:notify@db/notification_api 
+    depends_on:
+      db:
+        condition: service_healthy
+      migration:
+        condition: service_started
+  migration:
+    image: notifications-api
+    command: ["flask", "db", "upgrade"]
+    environment: *api-environment
+    depends_on:
+      db:
+        condition: service_healthy
+  admin:
+    image: notifications-admin
+    build:
+      context: ../notifications-admin
+      dockerfile: docker/Dockerfile
+    ports:
+      - "6012:6012"
+    command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
+    environment:
+      - NOTIFY_ENVIRONMENT=development
+      - FLASK_ENV=development
+      - FLASK_APP=application.py
+      - API_HOST_NAME=http://api:6011
+    depends_on:
+      api:
+        condition: service_started
+  db:
+    image: postgres:11-bullseye
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=notification_api
+      - POSTGRES_USER=notify
+      - POSTGRES_PASSWORD=notify
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+ 
