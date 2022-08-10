@@ -32,6 +32,8 @@ services:
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
     ports:
       - "6012:6012"
     command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
