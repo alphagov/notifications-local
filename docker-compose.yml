@@ -11,8 +11,6 @@ services:
     environment: &api-environment
       - NOTIFY_ENVIRONMENT=development
       - FLASK_ENV=development
-      - MMG_API_KEY=somekey
-      - FIRETEXT_API_KEY=somekey
       - FLASK_APP=application.py
       - SQLALCHEMY_DATABASE_URI=postgresql://notify:notify@db/notification_api
       - NOTIFICATION_QUEUE_PREFIX=${NOTIFICATION_QUEUE_PREFIX}
