@@ -14,7 +14,13 @@ services:
       - MMG_API_KEY=somekey
       - FIRETEXT_API_KEY=somekey
       - FLASK_APP=application.py
-      - SQLALCHEMY_DATABASE_URI=postgresql://notify:notify@db/notification_api 
+      - SQLALCHEMY_DATABASE_URI=postgresql://notify:notify@db/notification_api
+      - NOTIFICATION_QUEUE_PREFIX=${NOTIFICATION_QUEUE_PREFIX}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - FIRETEXT_API_KEY=${FIRETEXT_API_KEY}
+      - MMG_API_KEY=${MMG_API_KEY}
     depends_on:
       db:
         condition: service_healthy
@@ -24,6 +30,19 @@ services:
     image: notifications-api
     command: ["flask", "db", "upgrade"]
     environment: *api-environment
+    depends_on:
+      db:
+        condition: service_healthy
+  celery:
+    image: notifications-api
+    command:
+      - celery
+      - -A
+      - run_celery.notify_celery
+      - worker
+      - --loglevel=INFO
+    environment:
+      *api-environment
     depends_on:
       db:
         condition: service_healthy
@@ -60,4 +79,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
- 
