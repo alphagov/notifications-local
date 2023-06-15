@@ -39,8 +39,8 @@ services:
       - "6011:6011"
     command: ["api-local"]
     env_file:
-      - local-aws-creds.env
-      - notify-api.env
+      - private/local-aws-creds.env
+      - private/notify-api.env
     depends_on:
       db:
         condition: service_healthy
@@ -65,8 +65,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["migration"]
     env_file:
-      - local-aws-creds.env
-      - notify-api.env
+      - private/local-aws-creds.env
+      - private/notify-api.env
     depends_on:
       db:
         condition: service_healthy
@@ -80,8 +80,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["worker"]
     env_file:
-      - local-aws-creds.env
-      - notify-api.env
+      - private/local-aws-creds.env
+      - private/notify-api.env
     depends_on:
       db:
         condition: service_healthy
@@ -100,8 +100,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["celery-beat"]
     env_file:
-      - local-aws-creds.env
-      - notify-api.env
+      - private/local-aws-creds.env
+      - private/notify-api.env
     depends_on:
       db:
         condition: service_healthy
@@ -125,8 +125,8 @@ services:
       - "6012:6012"
     command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
     env_file:
-      - local-aws-creds.env
-      - notify-admin.env
+      - private/local-aws-creds.env
+      - private/notify-admin.env
     depends_on:
       notify-api:
         condition: service_started
@@ -153,8 +153,8 @@ services:
       - "7000:7000"
     command: ["flask", "run", "-p", "7000", "--host", "0.0.0.0"]
     env_file:
-      - local-aws-creds.env
-      - document-download-api.env
+      - private/local-aws-creds.env
+      - private/document-download-api.env
     depends_on:
       antivirus-api:
         condition: service_started
@@ -177,8 +177,8 @@ services:
       - "7001:7001"
     command: ["flask", "run", "-p", "7001", "--host", "0.0.0.0"]
     env_file:
-      - local-aws-creds.env
-      - document-download-frontend.env
+      - private/local-aws-creds.env
+      - private/document-download-frontend.env
     networks:
       apps:
         aliases:
@@ -198,8 +198,8 @@ services:
       - "6013:6013"
     command: ["web-local"]
     env_file:
-      - local-aws-creds.env
-      - template-preview-api.env
+      - private/local-aws-creds.env
+      - private/template-preview-api.env
     networks:
       apps:
         aliases:
@@ -217,8 +217,8 @@ services:
         - NOTIFY_ENVIRONMENT=development
     command: ["worker"]
     env_file:
-      - local-aws-creds.env
-      - template-preview-api.env
+      - private/local-aws-creds.env
+      - private/template-preview-api.env
     networks:
       apps:
 
@@ -236,8 +236,8 @@ services:
       - "6016:6016"
     entrypoint: ["./scripts/run_app.sh"]
     env_file:
-      - local-aws-creds.env
-      - antivirus-api.env
+      - private/local-aws-creds.env
+      - private/antivirus-api.env
     networks:
       apps:
         aliases:
@@ -255,8 +255,8 @@ services:
         - NOTIFY_ENVIRONMENT=development
     entrypoint: ["./scripts/run_celery.sh"]
     env_file:
-      - local-aws-creds.env
-      - antivirus-api.env
+      - private/local-aws-creds.env
+      - private/antivirus-api.env
     networks:
       apps:
 
