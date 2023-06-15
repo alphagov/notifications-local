@@ -31,7 +31,7 @@ services:
       dockerfile: docker/Dockerfile
     ports:
       - "6011:6011"
-    command: ["flask", "run", "--port", "6011", "--host", "0.0.0.0"]
+    command: ["api-local"]
     env_file:
       - notify-api.env
     environment: &api-environment
@@ -52,7 +52,7 @@ services:
   notify-api-db-migration:
     image: notifications-api
     container_name: db-migration
-    command: ["flask", "db", "upgrade"]
+    command: ["migration"]
     env_file:
       - notify-api.env
     environment:
@@ -64,12 +64,7 @@ services:
   notify-api-celery:
     image: notifications-api
     container_name: notify-api-celery
-    command:
-      - celery
-      - -A
-      - run_celery.notify_celery
-      - worker
-      - --loglevel=INFO
+    command: ["worker"]
     env_file:
       - notify-api.env
     environment:
@@ -83,12 +78,7 @@ services:
   notify-api-celery-beat:
     image: notifications-api
     container_name: notify-api-celery-beat
-    command:
-      - celery
-      - -A
-      - run_celery.notify_celery
-      - beat
-      - --loglevel=INFO
+    command: ["celery-beat"]
     env_file:
       - notify-api.env
     environment:
