@@ -16,12 +16,16 @@ services:
       interval: 5s
       timeout: 1s
       retries: 3
+    networks:
+      services:
 
   redis:
     image: redis:6.2
     container_name: redis
     ports:
       - "6380:6379"
+    networks:
+      services:
 
   notify-api:
     image: notifications-api
@@ -44,6 +48,11 @@ services:
         condition: service_started
       notify-api-db-migration:
         condition: service_started
+    networks:
+      services:
+      apps:
+        aliases:
+          - notify-api.localhost
 
   notify-api-db-migration:
     image: notifications-api
@@ -57,6 +66,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - services
 
   notify-api-celery:
     image: notifications-api
@@ -72,6 +83,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    networks:
+      services:
+      apps:
  
   notify-api-celery-beat:
     image: notifications-api
@@ -87,6 +101,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    networks:
+      services:
+      apps:
  
   notify-admin:
     image: notifications-admin
@@ -107,6 +124,10 @@ services:
     depends_on:
       notify-api:
         condition: service_started
+    networks:
+      apps:
+        aliases:
+          - notify.localhost
 
   document-download-api:
     image: document-download-api
@@ -124,6 +145,10 @@ services:
     env_file:
       - local-aws-creds.env
       - document-download-api.env
+    networks:
+      apps:
+        aliases:
+          - document-download-api.localhost
 
   document-download-frontend:
     image: document-download-frontend
@@ -141,3 +166,11 @@ services:
     env_file:
       - local-aws-creds.env
       - document-download-frontend.env
+    networks:
+      apps:
+        aliases:
+          - document-download-frontend.localhost
+
+networks:
+  services:
+  apps:
