@@ -32,3 +32,16 @@ We've got the docker postgres DB exposed on non-standard port 5433 so that it do
 * Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
 * Run `docker-compose down db`
 
+
+# Todo
+
+* Get local venvs inside containers so that we can edit/debug dependencies
+* Work out breakpoints (probably rdb/equivalent)
+* Investigate antivirus-api slow startups
+  * See if there's a clean way to have antivirus api disabled by default but possible to toggle on easily if needed.
+* See if can get frontend assets hot rebuilding
+* Investigate amd/arm docker images for antivirus and template-preview
+  * antivirus-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested        0.0s
+  * template-preview-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested    0.0s
+  * antivirus-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested           0.0s
+  * template-preview-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested 0.0s
