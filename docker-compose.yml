@@ -35,14 +35,8 @@ services:
       - "6011:6011"
     command: ["api-local"]
     env_file:
+      - local-aws-creds.env
       - notify-api.env
-    environment: &api-environment
-      - AWS_SECRET_ACCESS_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SESSION_TOKEN
-      - AWS_CREDENTIAL_EXPIRATION
-      - AWS_REGION
-      - AWS_DEFAULT_REGION
     depends_on:
       db:
         condition: service_healthy
@@ -58,9 +52,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["migration"]
     env_file:
+      - local-aws-creds.env
       - notify-api.env
-    environment:
-      *api-environment
     depends_on:
       db:
         condition: service_healthy
@@ -72,9 +65,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["worker"]
     env_file:
+      - local-aws-creds.env
       - notify-api.env
-    environment:
-      *api-environment
     depends_on:
       db:
         condition: service_healthy
@@ -88,9 +80,8 @@ services:
       - ../notifications-api:/home/vcap/app
     command: ["celery-beat"]
     env_file:
+      - local-aws-creds.env
       - notify-api.env
-    environment:
-      *api-environment
     depends_on:
       db:
         condition: service_healthy
@@ -111,6 +102,7 @@ services:
       - "6012:6012"
     command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
     env_file:
+      - local-aws-creds.env
       - notify-admin.env
     depends_on:
       notify-api:
