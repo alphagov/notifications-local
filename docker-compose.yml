@@ -26,6 +26,8 @@ services:
   notify-api:
     image: notifications-api
     container_name: notify-api
+    volumes:
+      - ../notifications-api:/home/vcap/app
     build:
       context: ../notifications-api
       dockerfile: docker/Dockerfile
@@ -52,6 +54,8 @@ services:
   notify-api-db-migration:
     image: notifications-api
     container_name: db-migration
+    volumes:
+      - ../notifications-api:/home/vcap/app
     command: ["migration"]
     env_file:
       - notify-api.env
@@ -64,6 +68,8 @@ services:
   notify-api-celery:
     image: notifications-api
     container_name: notify-api-celery
+    volumes:
+      - ../notifications-api:/home/vcap/app
     command: ["worker"]
     env_file:
       - notify-api.env
@@ -78,6 +84,8 @@ services:
   notify-api-celery-beat:
     image: notifications-api
     container_name: notify-api-celery-beat
+    volumes:
+      - ../notifications-api:/home/vcap/app
     command: ["celery-beat"]
     env_file:
       - notify-api.env
@@ -92,6 +100,8 @@ services:
   notify-admin:
     image: notifications-admin
     container_name: notify-admin
+    volumes:
+      - ../notifications-admin:/home/vcap/app
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
