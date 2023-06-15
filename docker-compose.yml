@@ -107,3 +107,37 @@ services:
     depends_on:
       notify-api:
         condition: service_started
+
+  document-download-api:
+    image: document-download-api
+    container_name: document-download-api
+    volumes:
+      - ../document-download-api:/home/vcap/app
+    build:
+      context: ../document-download-api
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "7000:7000"
+    command: ["flask", "run", "-p", "7000", "--host", "0.0.0.0"]
+    env_file:
+      - local-aws-creds.env
+      - document-download-api.env
+
+  document-download-frontend:
+    image: document-download-frontend
+    container_name: document-download-frontend
+    volumes:
+      - ../document-download-frontend:/home/vcap/app
+    build:
+      context: ../document-download-frontend
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "7001:7001"
+    command: ["flask", "run", "-p", "7001", "--host", "0.0.0.0"]
+    env_file:
+      - local-aws-creds.env
+      - document-download-frontend.env
