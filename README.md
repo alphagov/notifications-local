@@ -1,6 +1,20 @@
 # notifications-local
 Run Notify locally
 
+## Requirements
+
+All of the following repositories should be checked out in adjacent directories:
+
+* notifications-api
+* notifications-admin
+* notifications-template-preview
+* document-download-api
+* document-download-frontend
+* notifications-antivirus
+* notifications-credentials
+
+## Running/accessing services
+
 The services should all be accessed at `<service>.localhost:<port>` rather than just using `localhost:<port>`. In chromium-based browsers `.localhost` should automatically resolve to  the loopback address, but if it doesn't you will need to manually edit `/etc/hosts` to include each service address explicitly against `127.0.0.1`.
 
 Example:
