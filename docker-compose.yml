@@ -17,7 +17,7 @@ services:
       timeout: 1s
       retries: 3
     networks:
-      services:
+      db:
 
   redis:
     image: redis:6.2
@@ -25,7 +25,7 @@ services:
     ports:
       - "6380:6379"
     networks:
-      services:
+      redis:
 
   notify-api:
     image: notifications-api
@@ -53,7 +53,8 @@ services:
       antivirus-api:
         condition: service_started
     networks:
-      services:
+      db:
+      redis:
       apps:
         aliases:
           - notify-api.localhost
@@ -71,7 +72,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - services
+      db:
 
   notify-api-celery:
     image: notifications-api
@@ -90,7 +91,8 @@ services:
       antivirus-api:
         condition: service_started
     networks:
-      services:
+      redis:
+      db:
       apps:
  
   notify-api-celery-beat:
@@ -108,7 +110,8 @@ services:
       redis:
         condition: service_started
     networks:
-      services:
+      redis:
+      db:
       apps:
  
   notify-admin:
@@ -135,6 +138,7 @@ services:
       antivirus-api:
         condition: service_started
     networks:
+      redis:
       apps:
         aliases:
           - notify.localhost
@@ -261,5 +265,6 @@ services:
       apps:
 
 networks:
-  services:
+  db:
+  redis:
   apps:
