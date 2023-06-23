@@ -41,6 +41,8 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
     depends_on:
       db:
         condition: service_healthy
@@ -49,8 +51,6 @@ services:
       notify-api-db-migration:
         condition: service_started
       template-preview-api:
-        condition: service_started
-      antivirus-api:
         condition: service_started
     networks:
       db:
@@ -83,12 +83,12 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
     depends_on:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
-      antivirus-api:
         condition: service_started
     networks:
       redis:
@@ -98,12 +98,16 @@ services:
   notify-api-celery-beat:
     image: notifications-api
     container_name: notify-api-celery-beat
+    profiles:
+      - beat
     volumes:
       - ../notifications-api:/home/vcap/app
     command: ["celery-beat"]
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
     depends_on:
       db:
         condition: service_healthy
@@ -130,12 +134,12 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/notify-admin.env
+    environment:
+      - ANTIVIRUS_ENABLED
     depends_on:
       notify-api:
         condition: service_started
       template-preview-api:
-        condition: service_started
-      antivirus-api:
         condition: service_started
     networks:
       redis:
@@ -159,9 +163,8 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/document-download-api.env
-    depends_on:
-      antivirus-api:
-        condition: service_started
+    environment:
+      - ANTIVIRUS_ENABLED
     networks:
       apps:
         aliases:
@@ -229,6 +232,8 @@ services:
   antivirus-api:
     image: antivirus-api
     container_name: antivirus-api
+    profiles:
+      - antivirus
     volumes:
       - ../notifications-antivirus:/home/vcap/app
     build:
@@ -250,6 +255,8 @@ services:
   antivirus-celery:
     image: antivirus-api
     container_name: antivirus-celery
+    profiles:
+      - antivirus
     volumes:
       - ../notifications-antivirus:/home/vcap/app
     build:

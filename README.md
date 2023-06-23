@@ -15,6 +15,36 @@ All of the following repositories should be checked out in adjacent directories:
 
 ## Running/accessing services
 
+### Profiles
+
+#### Default profile
+
+Run `make up` to start Notify in the default profile.
+
+This will not run the celery-beat worker for the main notify API, or the antivirus app.
+
+We don't enable celery beat by default because it can generate a lot of log messages/spam to the service output, frustrating the developer experience.
+
+We don't enable antivirus by default because it takes a long time to start up.
+
+#### Enabling antivirus
+
+Run `make antivirus up`.
+
+This will make sure the antivirus-api and antivirus-celery tasks run, and set ANTIVIRUS_ENABLED on the appropriate apps.
+
+#### Enabling celery-beat
+
+Run `make beat up`
+
+This will enable the notify-api-celery-beat worker.
+
+#### Enabling both
+
+These can be combined with `make beat antivirus up`
+
+### Accessing your local Notify services
+
 The services should all be accessed at `<service>.localhost:<port>` rather than just using `localhost:<port>`. In chromium-based browsers `.localhost` should automatically resolve to  the loopback address, but if it doesn't you will need to manually edit `/etc/hosts` to include each service address explicitly against `127.0.0.1`.
 
 Example:
@@ -52,7 +82,6 @@ We've got the docker postgres DB exposed on non-standard port 5433 so that it do
 * Get local venvs inside containers so that we can edit/debug dependencies
 * Work out breakpoints (probably rdb/equivalent)
 * Investigate antivirus-api slow startups
-  * See if there's a clean way to have antivirus api disabled by default but possible to toggle on easily if needed.
 * See if can get frontend assets hot rebuilding
 * Investigate amd/arm docker images for antivirus and template-preview
   * antivirus-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested        0.0s
