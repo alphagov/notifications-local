@@ -5,13 +5,13 @@ Run Notify locally
 
 All of the following repositories should be checked out in adjacent directories:
 
-* [notifications-api](git@github.com:alphagov/notifications-api.git)
-* [notifications-admin](git@github.com:alphagov/notifications-admin.git)
-* [notifications-template-preview](git@github.com:alphagov/notifications-template-preview.git)
-* [document-download-api](git@github.com:alphagov/document-download-api.git)
-* [document-download-frontend](git@github.com:alphagov/document-download-frontend.git)
-* [notifications-antivirus](git@github.com:alphagov/notifications-antivirus.git)
-* [notifications-credentials](git@github.com:alphagov/notifications-credentials.git)
+* [notifications-api](https://github.com/alphagov/notifications-api.git)
+* [notifications-admin](https://github.com/alphagov/notifications-admin.git)
+* [notifications-template-preview](https://github.com/alphagov/notifications-template-preview.git)
+* [document-download-api](https://github.com/alphagov/document-download-api.git)
+* [document-download-frontend](https://github.com/alphagov/document-download-frontend.git)
+* [notifications-antivirus](https://github.com/alphagov/notifications-antivirus.git)
+* [notifications-credentials](https://github.com/alphagov/notifications-credentials.git)
 
 ## Running/accessing services
 
