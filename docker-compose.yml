@@ -32,6 +32,7 @@ services:
     container_name: notify-api
     volumes:
       - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-api
       dockerfile: docker/Dockerfile
@@ -79,6 +80,7 @@ services:
     container_name: notify-api-celery
     volumes:
       - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     command: ["worker"]
     env_file:
       - private/local-aws-creds.env
@@ -103,6 +105,7 @@ services:
       - beat
     volumes:
       - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     command: ["celery-beat"]
     env_file:
       - private/local-aws-creds.env
@@ -125,6 +128,7 @@ services:
     container_name: notify-admin
     volumes:
       - ../notifications-admin:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
@@ -198,6 +202,7 @@ services:
     container_name: template-preview-api
     volumes:
       - ../notifications-template-preview:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-template-preview
       dockerfile: docker/Dockerfile
@@ -219,6 +224,7 @@ services:
     container_name: template-preview-celery
     volumes:
       - ../notifications-template-preview:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-template-preview
       dockerfile: docker/Dockerfile
