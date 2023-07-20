@@ -210,7 +210,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "6013:6013"
-    command: ["web-local"]
+    command: [ "flask", "run", "--host=0.0.0.0", "-p", "6013", "--debug" ]
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
