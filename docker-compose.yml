@@ -92,7 +92,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    restart: on-failure
+    restart: always
     networks:
       redis:
       db:
@@ -117,7 +117,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    restart: on-failure
+    restart: always
     networks:
       redis:
       db:
@@ -234,7 +234,7 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
-    restart: on-failure
+    restart: always
     networks:
       apps:
 
@@ -277,7 +277,7 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
-    restart: on-failure
+    restart: always
     networks:
       apps:
 
