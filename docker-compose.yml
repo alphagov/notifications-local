@@ -39,6 +39,8 @@ services:
     ports:
       - "6011:6011"
     command: ["api-local"]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
@@ -137,6 +139,8 @@ services:
     ports:
       - "6012:6012"
     command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/notify-admin.env
@@ -166,6 +170,8 @@ services:
     ports:
       - "7000:7000"
     command: ["flask", "run", "-p", "7000", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/document-download-api.env
@@ -189,6 +195,8 @@ services:
     ports:
       - "7001:7001"
     command: ["flask", "run", "-p", "7001", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/document-download-frontend.env
@@ -211,6 +219,8 @@ services:
     ports:
       - "6013:6013"
     command: [ "flask", "run", "--host=0.0.0.0", "-p", "6013", "--debug" ]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
@@ -253,6 +263,8 @@ services:
     ports:
       - "6016:6016"
     entrypoint: ["./scripts/run_app.sh"]
+    stdin_open: true
+    tty: true
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
