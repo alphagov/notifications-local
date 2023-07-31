@@ -20,6 +20,13 @@ echo -n "Reading secrets from \`notifications-credentials\` ... "
 export TMPL_MMG_API_KEY=$(pass credentials/mmg | tail -n 6 | grep "API key" | cut -d" " -f3)
 export TMPL_FIRETEXT_API_KEY=$(pass credentials/firetext | tail -n 6 | grep "API key" | cut -d" " -f3)
 export TMPL_ZENDESK_API_KEY=$(pass credentials/preview/paas/environment-variables|grep ZENDESK_API_KEY|cut -d" " -f2|tr -d '"')
+
+export TMPL_NOTIFY_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_NOTIFY_ADMIN_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ADMIN_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_DOCUMENT_DOWNLOAD_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_TEMPLATE_PREVIEW_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep TEMPLATE_PREVIEW_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_ANTIVIRUS_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ANTIVIRUS_SENTRY_DSN|cut -d" " -f2|tr -d '"')
 echo -e "Done.\n"
 
 mkdir -p private
