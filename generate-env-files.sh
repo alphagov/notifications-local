@@ -1,33 +1,45 @@
 #!/bin/bash
 
-echo -n "Enter the full path to your local checkout of \`notifications-credentials\`: "
-read PASSWORD_STORE_DIR
-export PASSWORD_STORE_DIR
+if [[ "${CODESPACES}" = "true" ]]; then
+  if [[ -z "${GITHUB_USER}" || -z "${GH_NOTIFY_AWS_ACCESS_KEY_ID}" || -z "${GH_NOTIFY_AWS_SECRET_ACCESS_KEY}" ]]; then
+    echo "Invalid environment. Talk to a developer and quote this error message."
+    exit 1
+  fi
 
-echo -n "Enter your local development AWS SQS queue prefix (eg \`local_dev_sam_\`): "
-read TMPL_NOTIFICATIONS_QUEUE_PREFIX
-export TMPL_NOTIFICATIONS_QUEUE_PREFIX="${TMPL_NOTIFICATIONS_QUEUE_PREFIX}"
+  export TMPL_NOTIFICATIONS_QUEUE_PREFIX="codespaces_dev_${GITHUB_USER}"
+  export TMPL_AWS_ACCESS_KEY_ID="${GH_NOTIFY_AWS_ACCESS_KEY_ID}"
+  export TMPL_AWS_SECRET_ACCESS_KEY="${GH_NOTIFY_AWS_SECRET_ACCESS_KEY}"
 
-echo -n "Enter your local development user's aws_access_key_id: "
-read TMPL_AWS_ACCESS_KEY_ID
-export TMPL_AWS_ACCESS_KEY_ID="${TMPL_AWS_ACCESS_KEY_ID}"
+else
+  echo -n "Enter the full path to your local checkout of \`notifications-credentials\`: "
+  read PASSWORD_STORE_DIR
+  export PASSWORD_STORE_DIR
 
-echo -n "Enter your local development user's aws_secret_access_key: "
-read TMPL_AWS_SECRET_ACCESS_KEY
-export TMPL_AWS_SECRET_ACCESS_KEY="${TMPL_AWS_SECRET_ACCESS_KEY}"
+  echo -n "Enter your local development AWS SQS queue prefix (eg \`local_dev_sam_\`): "
+  read TMPL_NOTIFICATIONS_QUEUE_PREFIX
+  export TMPL_NOTIFICATIONS_QUEUE_PREFIX="${TMPL_NOTIFICATIONS_QUEUE_PREFIX}"
 
-echo -n "Reading secrets from \`notifications-credentials\` ... "
-export TMPL_MMG_API_KEY=$(pass credentials/mmg | tail -n 6 | grep "API key" | cut -d" " -f3)
-export TMPL_FIRETEXT_API_KEY=$(pass credentials/firetext | tail -n 6 | grep "API key" | cut -d" " -f3)
-export TMPL_ZENDESK_API_KEY=$(pass credentials/preview/paas/environment-variables|grep ZENDESK_API_KEY|cut -d" " -f2|tr -d '"')
+  echo -n "Enter your local development user's aws_access_key_id: "
+  read TMPL_AWS_ACCESS_KEY_ID
+  export TMPL_AWS_ACCESS_KEY_ID="${TMPL_AWS_ACCESS_KEY_ID}"
 
-export TMPL_NOTIFY_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_NOTIFY_ADMIN_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ADMIN_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_DOCUMENT_DOWNLOAD_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_TEMPLATE_PREVIEW_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep TEMPLATE_PREVIEW_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_ANTIVIRUS_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ANTIVIRUS_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-echo -e "Done.\n"
+  echo -n "Enter your local development user's aws_secret_access_key: "
+  read TMPL_AWS_SECRET_ACCESS_KEY
+  export TMPL_AWS_SECRET_ACCESS_KEY="${TMPL_AWS_SECRET_ACCESS_KEY}"
+
+  echo -n "Reading secrets from \`notifications-credentials\` ... "
+  export TMPL_MMG_API_KEY=$(pass credentials/mmg | tail -n 6 | grep "API key" | cut -d" " -f3)
+  export TMPL_FIRETEXT_API_KEY=$(pass credentials/firetext | tail -n 6 | grep "API key" | cut -d" " -f3)
+  export TMPL_ZENDESK_API_KEY=$(pass credentials/preview/paas/environment-variables|grep ZENDESK_API_KEY|cut -d" " -f2|tr -d '"')
+
+  export TMPL_NOTIFY_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  export TMPL_NOTIFY_ADMIN_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ADMIN_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  export TMPL_DOCUMENT_DOWNLOAD_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  export TMPL_TEMPLATE_PREVIEW_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep TEMPLATE_PREVIEW_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  export TMPL_ANTIVIRUS_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ANTIVIRUS_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+  echo -e "Done.\n"
+fi
 
 mkdir -p private
 
