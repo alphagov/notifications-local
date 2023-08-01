@@ -6,7 +6,7 @@ if [[ "${CODESPACES}" = "true" ]]; then
     exit 1
   fi
 
-  export HTTP_PROTO=https
+  export HTTP_PROTO=http
   export TMPL_NOTIFICATIONS_QUEUE_PREFIX="codespaces_dev_${GITHUB_USER}"
   export TMPL_AWS_ACCESS_KEY_ID="${GH_NOTIFY_AWS_ACCESS_KEY_ID}"
   export TMPL_AWS_SECRET_ACCESS_KEY="${GH_NOTIFY_AWS_SECRET_ACCESS_KEY}"
