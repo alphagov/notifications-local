@@ -17,6 +17,8 @@ if [[ "${CODESPACES}" = "true" ]]; then
   export TMPL_DOCUMENT_DOWNLOAD_API_HOSTNAME="${CODESPACE_NAME}-7000.preview.app.github.dev"
   export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_HOSTNAME="${CODESPACE_NAME}-7001.preview.app.github.dev"
 
+  ./rewrite-docker-compose-aliases.sh
+
 else
   echo -n "Enter the full path to your local checkout of \`notifications-credentials\`: "
   read PASSWORD_STORE_DIR
