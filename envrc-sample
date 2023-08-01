@@ -1,0 +1,6 @@
+eval $(gds aws notify-tools-admin -e)
+export PASSWORD_STORE_DIR=~/.notify-credentials
+
+export NOTIFICATION_QUEUE_PREFIX=local_dev_blah
+export MMG_API_KEY=$(pass credentials/mmg | tail -n 6 | grep "API key" | cut -d" " -f3)
+export FIRETEXT_API_KEY=$(pass credentials/firetext | tail -n 6 | grep "API key" | cut -d" " -f3)

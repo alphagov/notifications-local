@@ -1,0 +1,299 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:11-bullseye
+    container_name: db
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=notification_api
+      - POSTGRES_USER=notify
+      - POSTGRES_PASSWORD=notify
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      db:
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    ports:
+      - "6380:6379"
+    networks:
+      redis:
+
+  notify-api:
+    image: notifications-api
+    container_name: notify-api
+    volumes:
+      - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    build:
+      context: ../notifications-api
+      dockerfile: docker/Dockerfile
+    ports:
+      - "6011:6011"
+    command: ["api-local"]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      notify-api-db-migration:
+        condition: service_started
+      template-preview-api:
+        condition: service_started
+    networks:
+      db:
+      redis:
+      apps:
+        aliases:
+          - notify-api.localhost
+
+  notify-api-db-migration:
+    image: notifications-api
+    container_name: db-migration
+    volumes:
+      - ../notifications-api:/home/vcap/app
+    command: ["migration"]
+    env_file:
+      - private/local-aws-creds.env
+      - private/notify-api.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      db:
+
+  notify-api-celery:
+    image: notifications-api
+    container_name: notify-api-celery
+    volumes:
+      - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    command: ["worker"]
+    env_file:
+      - private/local-aws-creds.env
+      - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: always
+    networks:
+      redis:
+      db:
+      apps:
+ 
+  notify-api-celery-beat:
+    image: notifications-api
+    container_name: notify-api-celery-beat
+    profiles:
+      - beat
+    volumes:
+      - ../notifications-api:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    command: ["celery-beat"]
+    env_file:
+      - private/local-aws-creds.env
+      - private/notify-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: always
+    networks:
+      redis:
+      db:
+      apps:
+ 
+  notify-admin:
+    image: notifications-admin
+    container_name: notify-admin
+    volumes:
+      - ../notifications-admin:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    build:
+      context: ../notifications-admin
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "6012:6012"
+    command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/notify-admin.env
+    environment:
+      - ANTIVIRUS_ENABLED
+    depends_on:
+      notify-api:
+        condition: service_started
+      template-preview-api:
+        condition: service_started
+    networks:
+      redis:
+      apps:
+        aliases:
+          - notify.localhost
+
+  document-download-api:
+    image: document-download-api
+    container_name: document-download-api
+    volumes:
+      - ../document-download-api:/home/vcap/app
+    build:
+      context: ../document-download-api
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "7000:7000"
+    command: ["flask", "run", "-p", "7000", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/document-download-api.env
+    environment:
+      - ANTIVIRUS_ENABLED
+    networks:
+      apps:
+        aliases:
+          - document-download-api.localhost
+
+  document-download-frontend:
+    image: document-download-frontend
+    container_name: document-download-frontend
+    volumes:
+      - ../document-download-frontend:/home/vcap/app
+    build:
+      context: ../document-download-frontend
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "7001:7001"
+    command: ["flask", "run", "-p", "7001", "--host", "0.0.0.0"]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/document-download-frontend.env
+    networks:
+      apps:
+        aliases:
+          - document-download-frontend.localhost
+
+  template-preview-api:
+    image: template-preview-api
+    container_name: template-preview-api
+    volumes:
+      - ../notifications-template-preview:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    build:
+      context: ../notifications-template-preview
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "6013:6013"
+    command: [ "flask", "run", "--host=0.0.0.0", "-p", "6013", "--debug" ]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/template-preview-api.env
+    networks:
+      apps:
+        aliases:
+          - template-preview-api.localhost
+
+  template-preview-celery:
+    image: template-preview-celery
+    container_name: template-preview-celery
+    volumes:
+      - ../notifications-template-preview:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
+    build:
+      context: ../notifications-template-preview
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    command: ["worker"]
+    env_file:
+      - private/local-aws-creds.env
+      - private/template-preview-api.env
+    restart: always
+    networks:
+      apps:
+
+  antivirus-api:
+    image: antivirus-api
+    container_name: antivirus-api
+    profiles:
+      - antivirus
+    volumes:
+      - ../notifications-antivirus:/home/vcap/app
+    build:
+      context: ../notifications-antivirus
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    ports:
+      - "6016:6016"
+    entrypoint: ["./scripts/run_app.sh"]
+    stdin_open: true
+    tty: true
+    env_file:
+      - private/local-aws-creds.env
+      - private/antivirus-api.env
+    networks:
+      apps:
+        aliases:
+          - antivirus-api.localhost
+
+  antivirus-celery:
+    image: antivirus-api
+    container_name: antivirus-celery
+    profiles:
+      - antivirus
+    volumes:
+      - ../notifications-antivirus:/home/vcap/app
+    build:
+      context: ../notifications-antivirus
+      dockerfile: docker/Dockerfile
+      args:
+        - NOTIFY_ENVIRONMENT=development
+    entrypoint: ["./scripts/run_celery.sh"]
+    env_file:
+      - private/local-aws-creds.env
+      - private/antivirus-api.env
+    restart: always
+    networks:
+      apps:
+
+networks:
+  db:
+  redis:
+  apps:
