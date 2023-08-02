@@ -80,5 +80,7 @@ done
 
 if [[ "${CODESPACES}" == "true" ]]; then
  sed -i.bak 's/^\(SERVER_NAME=*\)/# \1/g' private/*.env
+ sed -i.bak 's/^\(API_HOST_NAME=.*\)$/\1:6011/g' private/notify-admin.env
+ sed -i.bak 's/^\(TEMPLATE_PREVIEW_API_HOST=.*\)$/\1:6013/g' private/notify-admin.env
  rm private/*.env.bak
 fi
