@@ -77,3 +77,8 @@ do
   cat ${service}.env.tmpl | envsubst > private/${service}.env
   echo "Done."
 done
+
+if [[ "${CODESPACES}" == "true" ]]; then
+ sed -i.bak 's/^\(SERVER_NAME=*\)/# \1/g' private/*.env
+ rm private/*.env.bak
+fi
