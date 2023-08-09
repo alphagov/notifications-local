@@ -259,16 +259,21 @@ services:
       - antivirus
     volumes:
       - ../notifications-antivirus:/home/vcap/app
+      - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-antivirus
       dockerfile: docker/Dockerfile
+      target: test
       args:
         - NOTIFY_ENVIRONMENT=development
+        - BASE_IMAGE=base
     ports:
       - "6016:6016"
     entrypoint: ["./scripts/run_app.sh"]
     stdin_open: true
     tty: true
+    environment:
+      - FLASK_RUN_EXTRA_FILES=/opt/venv/
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
