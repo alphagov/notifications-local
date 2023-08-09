@@ -214,13 +214,17 @@ services:
     build:
       context: ../notifications-template-preview
       dockerfile: docker/Dockerfile
+      target: test
       args:
         - NOTIFY_ENVIRONMENT=development
+        - BASE_IMAGE=base
     ports:
       - "6013:6013"
     command: [ "flask", "run", "--host=0.0.0.0", "-p", "6013", "--debug" ]
     stdin_open: true
     tty: true
+    environment:
+      - FLASK_RUN_EXTRA_FILES=/opt/venv/
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
