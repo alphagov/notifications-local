@@ -14,11 +14,12 @@ All of the following repositories should be checked out in adjacent directories:
 * [notifications-credentials](https://github.com/alphagov/notifications-credentials.git)
 
 You can just run the `./clone-repos.sh` script if you have git+ssh configureed. This will importantly also run `make generate-version-file` in each repo, which is needed by most of the app dockerfiles.
+
 ### Pre Requisites
 
 If you haven't run the clone repos above as you already had them downloaded, just make sure to generate the versions for these repos
 
-`cd notifications-admin` and run `make generate-version-file` to get a vesrion file for the local build of notifications-admin
+`cd notifications-admin` and run `make generate-version-file` to get a version file for the local build of notifications-admin
 `cd notfications-api` and `make generate-version-file`
 `cd notfications-template-preview` and `make generate-version-file`
 
@@ -85,11 +86,15 @@ We've got the docker postgres DB exposed on non-standard port 5433 so that it do
 * Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
 * Run `docker-compose down db`
 
+## Debugging containers
+
+When running, the applications should all hot reload on code changes. This means you can add breakpoints into the code anywhere, and when that line is executed, the application will pause and start a debugger. To attach to the debugger you will need to open a separate terminal and run `docker attach <container>`, eg `docker attach notify-api`.
+
+**Importantly**, to detach you should enter the control sequence Ctrl-P Ctrl-Q, **not Ctrl-C** which will kill the Flask app.
 
 # Todo
 
 * Get local venvs inside containers so that we can edit/debug dependencies
-* Work out breakpoints (probably rdb/equivalent)
 * Investigate antivirus-api slow startups
 * See if can get frontend assets hot rebuilding
 * Investigate amd/arm docker images for antivirus and template-preview
