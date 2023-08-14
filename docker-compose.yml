@@ -36,6 +36,7 @@ services:
     build:
       context: ../notifications-api
       dockerfile: docker/Dockerfile
+      target: test
     ports:
       - "6011:6011"
     command: ["api-local"]
@@ -46,6 +47,7 @@ services:
       - private/notify-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - FLASK_RUN_EXTRA_FILES=/opt/venv/
     depends_on:
       db:
         condition: service_healthy
