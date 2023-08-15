@@ -92,6 +92,18 @@ When running, the applications should all hot reload on code changes. This means
 
 **Importantly**, to detach you should enter the control sequence Ctrl-P Ctrl-Q, **not Ctrl-C** which will kill the Flask app.
 
+## Useful docker aliases
+
+When using docker-compose to run GOV.UK Notify, you may fairly frequently need to interact with the docker containers, and so typing out standard docker commands in full every time can get a bit repetitive. These may be some useful aliases to set up:
+
+```
+alias dc='docker-compose'
+alias da='docker attach'
+alias de='docker exec -it'
+```
+
+For example, if you've added a breakpoint into one of the apps and you've triggered it, instead of typing `docker attach notify-admin` you can type `da notify-admin`. Or if you want a shell inside of one of the app containers to run arbitrary commands - eg install local utils, re-build frontend assets, etc - you can run `de notify-admin bash` instead of `docker exec -it notify-admin bash`.
+
 # Todo
 
 * Get local venvs inside containers so that we can edit/debug dependencies
