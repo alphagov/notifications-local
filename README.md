@@ -108,7 +108,6 @@ For example, if you've added a breakpoint into one of the apps and you've trigge
 
 # Todo
 
-* Get local venvs inside containers so that we can edit/debug dependencies
 * Investigate antivirus-api slow startups
 * See if can get frontend assets hot rebuilding
 * Investigate amd/arm docker images for antivirus and template-preview
