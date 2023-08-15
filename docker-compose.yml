@@ -140,7 +140,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "6012:6012"
-    command: ["flask", "run", "--port", "6012", "--host", "0.0.0.0"]
+    command: ["web-local"]
     stdin_open: true
     tty: true
     env_file:
@@ -148,6 +148,7 @@ services:
       - private/notify-admin.env
     environment:
       - ANTIVIRUS_ENABLED
+      - FLASK_RUN_EXTRA_FILES=/opt/venv/
     depends_on:
       notify-api:
         condition: service_started
