@@ -12,6 +12,8 @@ All of the following repositories should be checked out in adjacent directories:
 * [document-download-frontend](https://github.com/alphagov/document-download-frontend.git)
 * [notifications-antivirus](https://github.com/alphagov/notifications-antivirus.git)
 * [notifications-credentials](https://github.com/alphagov/notifications-credentials.git)
+* [notifications-utils](https://github.com/alphagov/notifications-utils.git)
+
 
 You can just run the `./clone-repos.sh` script if you have git+ssh configureed. This will importantly also run `make generate-version-file` in each repo, which is needed by most of the app dockerfiles.
 
