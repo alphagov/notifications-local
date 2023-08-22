@@ -25,6 +25,12 @@ If you haven't run the clone repos above as you already had them downloaded, jus
 `cd notfications-api` and `make generate-version-file`
 `cd notfications-template-preview` and `make generate-version-file`
 
+## Preparing env files
+
+* Run `./generate-env-files.sh` and follow the instructions.
+
+Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository and the `./generate-env-files.sh` script will walk through collecting the required secrets and generating the correct files into the `private/` directory. This should obviously never be committed and is excluded in `.gitignore`.
+
 ## Running/accessing services
 
 ### Profiles
@@ -71,12 +77,6 @@ Service list:
  - document-download-api: `document-download-api.localhost:7000`
  - template-preview-api: `template-preview-api.localhost:6013`
  - antivirus-api: `antivirus-api.localhost:6016`
-
-## Preparing env files
-
-Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository and the `./generate-env-files.sh` script will walk through collecting the required secrets and generating the correct files into the `private/` directory. This should obviously never be committed and is excluded in `.gitignore`.
-
-* Run `./generate-env-files.sh` and follow the instructions.
 
 ## Copying existing local DB to new Docker DB
 
