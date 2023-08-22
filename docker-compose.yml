@@ -136,6 +136,7 @@ services:
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
+      target: test
       args:
         - NOTIFY_ENVIRONMENT=development
     ports:
