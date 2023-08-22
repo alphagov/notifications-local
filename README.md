@@ -25,7 +25,7 @@ If you haven't run the clone repos above as you already had them downloaded, jus
 `cd notfications-api` and `make generate-version-file`
 `cd notfications-template-preview` and `make generate-version-file`
 
-## Preparing env files
+#### Preparing env files
 
 * Run `./generate-env-files.sh` and follow the instructions.
 
