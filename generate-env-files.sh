@@ -4,7 +4,7 @@ echo -n "Enter the full path to your local checkout of \`notifications-credentia
 read PASSWORD_STORE_DIR
 export PASSWORD_STORE_DIR
 
-echo -n "Enter your local development AWS SQS queue prefix (eg \`local_dev_sam\`): "
+echo -n "Enter your local development AWS SQS queue prefix (eg \`local_dev_sam_\`): "
 read TMPL_NOTIFICATIONS_QUEUE_PREFIX
 export TMPL_NOTIFICATIONS_QUEUE_PREFIX="${TMPL_NOTIFICATIONS_QUEUE_PREFIX}"
 
