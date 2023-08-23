@@ -27,7 +27,7 @@ echo "127.0.0.1       notify.localhost notify-api.localhost document-download-ap
 
 4) This step is only required if you are switching to running GOV.UK Notify via docker-compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
    1) Make sure local postgres service is running (on standard port 5432)
-   2) Run `docker-compose up db -d` to start docker postgres.
+   2) Run `docker-compose up -d db` to start docker postgres.
    3) Run `psql postgresql://notify:notify@localhost:5433/postgres -c 'drop database notification_api; create database notification_api'`
    4) Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
    5) Run `docker-compose down db`
