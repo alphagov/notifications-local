@@ -238,16 +238,11 @@ services:
           - template-preview-api.localhost
 
   template-preview-celery:
-    image: template-preview-celery
+    image: template-preview-api
     container_name: template-preview-celery
     volumes:
       - ../notifications-template-preview:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
-    build:
-      context: ../notifications-template-preview
-      dockerfile: docker/Dockerfile
-      args:
-        - NOTIFY_ENVIRONMENT=development
     command: ["worker"]
     env_file:
       - private/local-aws-creds.env
