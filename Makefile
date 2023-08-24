@@ -16,3 +16,7 @@ antivirus:
 .PHONY: up
 up:
 	@${DC_ANTIVIRUS} docker-compose ${DC_PROFILES} up
+
+.PHONY: stop
+stop:
+	docker-compose ${DC_PROFILES} stop
