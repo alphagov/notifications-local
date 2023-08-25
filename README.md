@@ -22,7 +22,7 @@ This README needs some love and may not be in an intuitive order. Please read th
   
     Run this script and follow the instructions:
     ```bash
-    ./generate-env-vars
+    ./generate-env-vars.sh
     ```
 
 4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
