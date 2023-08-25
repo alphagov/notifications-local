@@ -5,25 +5,25 @@ This README needs some love and may not be in an intuitive order. Please read th
 
 ## Initial setup
 
-We need to have quite a few repositories checked out to run a full copy of GOV.UK Notify. A helper script is provided to make sure these are checked out locally (and check them out if they're not), then do some initial setup.
+1) We need to have quite a few repositories checked out to run a full copy of GOV.UK Notify. A helper script is provided to make sure these are checked out locally (and check them out if they're not), then do some initial setup.
 
-1) Run this script:
-```bash
-./clone-repos.sh
-```
+    Run this script:
+    ```bash
+    ./clone-repos.sh
+    ```
 
-Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository and the `./generate-env-files.sh` script will walk through collecting the required secrets and generating the correct files into the `private/` directory. This should obviously never be committed and is excluded in `.gitignore`.
+3) Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository a helper script automates generating real .env into the `./private` directory files from those templates, prompting for input as required. These should obviously never be committed and is excluded in `.gitignore`.
+  
+    Run this script and follow the instructions:
+    ```bash
+    ./generate-env-vars
+    ```
 
-2) Run this script and follow the instructions:
-```bash
-./generate-env-vars
-```
+4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
-3) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
-
-```bash
-echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
-```
+    ```bash
+    echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
+    ```
 
 4) This step is only required if you are switching to running GOV.UK Notify via docker-compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
    1) Make sure local postgres service is running (on standard port 5432)
@@ -76,3 +76,4 @@ For example, if you've added a breakpoint into one of the apps and you've trigge
   * template-preview-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested    0.0s
   * antivirus-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested           0.0s
   * template-preview-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested 0.0s
+
