@@ -1,92 +1,53 @@
 # notifications-local
-Run Notify locally
+A docker-compose file, and associated configuration, to run GOV.UK Notify locally in development mode.
 
-## Requirements
+This README needs some love and may not be in an intuitive order. Please read the entire document top-to-bottom before trying to set up your environment. Please update this README if you think something is missing, in the wrong place, or poorly described =)
 
-All of the following repositories should be checked out in adjacent directories:
+## Initial setup
 
-* [notifications-api](https://github.com/alphagov/notifications-api.git)
-* [notifications-admin](https://github.com/alphagov/notifications-admin.git)
-* [notifications-template-preview](https://github.com/alphagov/notifications-template-preview.git)
-* [document-download-api](https://github.com/alphagov/document-download-api.git)
-* [document-download-frontend](https://github.com/alphagov/document-download-frontend.git)
-* [notifications-antivirus](https://github.com/alphagov/notifications-antivirus.git)
-* [notifications-credentials](https://github.com/alphagov/notifications-credentials.git)
-* [notifications-utils](https://github.com/alphagov/notifications-utils.git)
+We need to have quite a few repositories checked out to run a full copy of GOV.UK Notify. A helper script is provided to make sure these are checked out locally (and check them out if they're not), then do some initial setup.
 
-
-You can just run the `./clone-repos.sh` script if you have git+ssh configureed. This will importantly also run `make generate-version-file` in each repo, which is needed by most of the app dockerfiles.
-
-### Pre Requisites
-
-If you haven't run the clone repos above as you already had them downloaded, just make sure to generate the versions for these repos
-
-`cd notifications-admin` and run `make generate-version-file` to get a version file for the local build of notifications-admin
-`cd notfications-api` and `make generate-version-file`
-`cd notfications-template-preview` and `make generate-version-file`
-
-#### Preparing env files
-
-* Run `./generate-env-files.sh` and follow the instructions.
+1) Run this script:
+```bash
+./clone-repos.sh
+```
 
 Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository and the `./generate-env-files.sh` script will walk through collecting the required secrets and generating the correct files into the `private/` directory. This should obviously never be committed and is excluded in `.gitignore`.
 
+2) Run this script and follow the instructions:
+```bash
+./generate-env-vars
+```
+
+3) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
+
+```bash
+echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
+```
+
+4) This step is only required if you are switching to running GOV.UK Notify via docker-compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
+   1) Make sure local postgres service is running (on standard port 5432)
+   2) Run `docker-compose up -d db` to start docker postgres.
+   3) Run `psql postgresql://notify:notify@localhost:5433/postgres -c 'drop database notification_api; create database notification_api'`
+   4) Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
+   5) Run `docker-compose down db`
+
 ## Running/accessing services
 
-### Profiles
+The default way to bring up a local version of GOV.UK Notify, after following setup, is to run `make up` from the root of this repository. This will start notify-api, notify-api-celery, notify-admin, template-preview-api, template-preview-celery, document-download-api, and document-download-preview, which will cover 95%+ of the things you need.
 
-#### Default profile
-
-Run `make up` to start Notify in the default profile.
-
-This will not run the celery-beat worker for the main notify API, or the antivirus app.
-
-We don't enable celery beat by default because it can generate a lot of log messages/spam to the service output, frustrating the developer experience.
-
-We don't enable antivirus by default because it takes a long time to start up.
-
-#### Enabling antivirus
-
-Run `make antivirus up`.
-
-This will make sure the antivirus-api and antivirus-celery tasks run, and set ANTIVIRUS_ENABLED on the appropriate apps.
-
-#### Enabling celery-beat
-
-Run `make beat up`
-
-This will enable the notify-api-celery-beat worker.
-
-#### Enabling both
-
-These can be combined with `make beat antivirus up`
+To also run and enable antivirus scanning, run `make antivirus up`. To run and enable celery-beat for regularly-scheduled tasks, run `make beat up`. These can be combined to `make beat antivirus up` to run *everything*.
 
 ### Accessing your local Notify services
 
-The services should all be accessed at `<service>.localhost:<port>` rather than just using `localhost:<port>`. In chromium-based browsers `.localhost` should automatically resolve to  the loopback address, but if it doesn't you will need to manually edit `/etc/hosts` to include each service address explicitly against `127.0.0.1`.
+Your GOV.UK Notify services are available at the following URLs:
 
-Example:
-```
-127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost
-```
-
-Service list:
- - notify-admin: `notify.localhost:6012`
- - notify-api: `notify-api.localhost:6011`
- - document-download-frontend: `document-download-frontend.localhost:7001`
- - document-download-api: `document-download-api.localhost:7000`
- - template-preview-api: `template-preview-api.localhost:6013`
- - antivirus-api: `antivirus-api.localhost:6016`
-
-## Copying existing local DB to new Docker DB
-
-We've got the docker postgres DB exposed on non-standard port 5433 so that it doesn't interfere with any other local postgres you might already have running. Probably good to reconcile this at some point. Similar with redis which for docker is exposed on 6380 (standard port is 6379).
-
-* Make sure local postgres service is running (on standard port 5432)
-* Run `docker-compose up db -d` to start docker postgres.
-* Run `psql postgresql://notify:notify@localhost:5433/postgres -c 'drop database notification_api; create database notification_api'`
-* Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
-* Run `docker-compose down db`
+ - notify-api: `http://notify-api.localhost:6011`
+ - notify-admin: `http://notify.localhost:6012`
+ - template-preview-api: `http://template-preview-api.localhost:6013`
+ - antivirus-api: `http://antivirus-api.localhost:6016`
+ - document-download-frontend: `http://document-download-frontend.localhost:7001`
+ - document-download-api: `http://document-download-api.localhost:7000`
 
 ## Debugging containers
 
@@ -109,7 +70,7 @@ For example, if you've added a breakpoint into one of the apps and you've trigge
 # Todo
 
 * Investigate antivirus-api slow startups
-* See if can get frontend assets hot rebuilding
+* Get frontend assets hot rebuilding for notify-admin and document-download-frontend. Until then, you can run `docker exec -it notify-admin npm run build` for an ad-hoc recompile, or `docker exec -it notify-admin npm run watch` to spin up a long-lived watcher process. Optionally add a `-d` flag to detach from the process and leave it running it the background. 
 * Investigate amd/arm docker images for antivirus and template-preview
   * antivirus-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested        0.0s
   * template-preview-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested    0.0s
