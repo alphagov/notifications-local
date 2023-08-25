@@ -39,6 +39,7 @@ This README needs some love and may not be in an intuitive order. Please read th
    3) Run `psql postgresql://notify:notify@localhost:5433/postgres -c 'drop database notification_api; create database notification_api'`
    4) Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
    5) Run `docker-compose down db`
+   6) If you login locally with yubikey, update your user's auth_type to email_auth temporarily: `psql postgresql://notify:notify@localhost:5433/notification_api -c "update users set auth_type='email_auth' where email_address='EMAIL_ADDRESS'"`
 
 ## Running/accessing services
 
