@@ -5,7 +5,13 @@ This README needs some love and may not be in an intuitive order. Please read th
 
 ## Initial setup
 
-1) We need to have quite a few repositories checked out to run a full copy of GOV.UK Notify. A helper script is provided to make sure these are checked out locally (and check them out if they're not), then do some initial setup.
+1) Clone this repository alongside your existing Notify repositories (if any).
+    ```
+    git@github.com:alphagov/notifications-local.git
+    cd notifications-local
+    ```
+
+2) We need to have quite a few repositories checked out to run a full copy of GOV.UK Notify. A helper script is provided to make sure these are checked out locally (and check them out if they're not), then do some initial setup.
 
     Run this script:
     ```bash
