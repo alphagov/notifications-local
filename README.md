@@ -1,5 +1,5 @@
 # notifications-local
-A docker-compose file, and associated configuration, to run GOV.UK Notify locally in development mode.
+A docker compose file, and associated configuration, to run GOV.UK Notify locally in development mode.
 
 This README needs some love and may not be in an intuitive order. Please read the entire document top-to-bottom before trying to set up your environment. Please update this README if you think something is missing, in the wrong place, or poorly described =)
 
@@ -35,13 +35,15 @@ This README needs some love and may not be in an intuitive order. Please read th
     echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
     ```
 
-4) This step is only required if you are switching to running GOV.UK Notify via docker-compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
+4) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
    1) Make sure local postgres service is running (on standard port 5432)
-   2) Run `docker-compose up -d db` to start docker postgres.
-   3) Run `psql postgresql://notify:notify@localhost:5433/postgres -c 'drop database notification_api; create database notification_api'`
+   2) Run `docker compose up -d db` to start docker postgres.
+   3) Connect to docker's postgres with `psql postgresql://notify:notify@localhost:5433/postgres` and run:
+      1) `drop database notification_api;`
+      2) `create database notification_api;`
    4) Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
    5) If you login locally with yubikey, update your user's auth_type to email_auth temporarily: `psql postgresql://notify:notify@localhost:5433/notification_api -c "update users set auth_type='email_auth' where email_address='EMAIL_ADDRESS'"`
-   6) Run `docker-compose down`
+   6) Run `docker compose down`
 
 ## Running/accessing services
 
@@ -68,10 +70,10 @@ When running, the applications should all hot reload on code changes. This means
 
 ## Useful docker aliases
 
-When using docker-compose to run GOV.UK Notify, you may fairly frequently need to interact with the docker containers, and so typing out standard docker commands in full every time can get a bit repetitive. These may be some useful aliases to set up:
+When using docker compose to run GOV.UK Notify, you may fairly frequently need to interact with the docker containers, and so typing out standard docker commands in full every time can get a bit repetitive. These may be some useful aliases to set up:
 
 ```
-alias dc='docker-compose'
+alias dc='docker compose'
 alias da='docker attach'
 alias de='docker exec -it'
 ```
