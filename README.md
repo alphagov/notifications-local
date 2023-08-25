@@ -19,13 +19,15 @@ This README needs some love and may not be in an intuitive order. Please read th
     ```
 
 3) Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository a helper script automates generating real .env into the `./private` directory files from those templates, prompting for input as required. These should obviously never be committed and is excluded in `.gitignore`.
+
+    You will need the full path of your checked-out credentials repository (cd to it and run `pwd`), your SQS queue prefix from `notifications-api/environment.sh`, and your AWS access key/secret key from `~/.aws/credentials` 
   
     Run this script and follow the instructions:
     ```bash
     ./generate-env-files.sh
     ```
 
-4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
+5) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
     ```bash
     echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
