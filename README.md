@@ -29,13 +29,13 @@ This README needs some love and may not be in an intuitive order. Please read th
     ./generate-env-files.sh
     ```
 
-5) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
+4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
     ```bash
     echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
     ```
 
-4) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
+5) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
    1) Make sure local postgres service is running (on standard port 5432)
    2) Run `docker compose up -d db` to start docker postgres.
    3) Connect to docker's postgres with `psql postgresql://notify:notify@localhost:5433/postgres` and run:
@@ -44,6 +44,8 @@ This README needs some love and may not be in an intuitive order. Please read th
    4) Run `pg_dump -d notification_api | psql postgresql://notify:notify@localhost:5433/notification_api` to copy local postgres to docker postgres
    5) If you login locally with yubikey, update your user's auth_type to email_auth temporarily: `psql postgresql://notify:notify@localhost:5433/notification_api -c "update users set auth_type='email_auth' where email_address='EMAIL_ADDRESS'"`
    6) Run `docker compose down`
+
+6) Run `docker compose build` to make sure all the containers have been built and are up-to-date.
 
 ## Running/accessing services
 
