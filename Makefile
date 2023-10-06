@@ -15,8 +15,12 @@ antivirus:
 
 .PHONY: up
 up:
-	@${DC_ANTIVIRUS} docker compose ${DC_PROFILES} up
+	${DC_ANTIVIRUS} docker compose ${DC_PROFILES} up
 
 .PHONY: stop
-stop:
+stop: beat antivirus
 	docker compose ${DC_PROFILES} stop
+
+.PHONY: down
+down: beat antivirus
+	docker compose ${DC_PROFILES} down
