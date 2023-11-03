@@ -51,7 +51,7 @@ This README needs some love and may not be in an intuitive order. Please read th
 
 The default way to bring up a local version of GOV.UK Notify, after following setup, is to run `make up` from the root of this repository. This will start notify-api, notify-api-celery, notify-admin, template-preview-api, template-preview-celery, document-download-api, and document-download-preview, which will cover 95%+ of the things you need.
 
-To also run and enable antivirus scanning, run `make antivirus up`. To run and enable celery-beat for regularly-scheduled tasks, run `make beat up`. These can be combined to `make beat antivirus up` to run *everything*.
+To also run and enable antivirus scanning, run `make antivirus up`. To run and enable celery-beat for regularly-scheduled tasks, run `make beat up`. To run and enable the sms-provider-stub, run `make sms-provider-stub up`. These can be combined to `make beat antivirus sms-provider-stub up` to run *everything*.
 
 ### Accessing your local Notify services
 

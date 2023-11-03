@@ -91,6 +91,8 @@ services:
       - private/notify-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - MMG_URL
+      - FIRETEXT_URL
     depends_on:
       db:
         condition: service_healthy
@@ -306,6 +308,26 @@ services:
     restart: always
     networks:
       apps:
+
+  sms-provider-stub:
+    image: sms-provider-stub
+    container_name: sms-provider-stub
+    profiles:
+      - sms-provider-stub
+    build:
+      context: ../notifications-sms-provider-stub
+      dockerfile: docker/Dockerfile
+    ports:
+      - "6300:6300"
+    stdin_open: true
+    tty: true
+    environment:
+      - FIRETEXT_CALLBACK_URL=http://notify-api.localhost:6011/notifications/sms/firetext
+      - MMG_CALLBACK_URL=http://notify-api.localhost:6011/notifications/sms/mmg
+    networks:
+      apps:
+        aliases:
+          - notify.localhost
 
 networks:
   db:
