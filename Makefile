@@ -13,14 +13,21 @@ antivirus:
 	$(eval export DC_PROFILES=${DC_PROFILES} --profile antivirus)
 	@true
 
+.PHONY: sms-provider-stub
+sms-provider-stub:
+	$(eval export DC_SMS_PROVIDER_STUB_MMG=MMG_URL=http://host.docker.internal:6300/mmg)
+	$(eval export DC_SMS_PROVIDER_STUB_FIRETEXT=FIRETEXT_URL=http://host.docker.internal:6300/firetext)
+	$(eval export DC_PROFILES=${DC_PROFILES} --profile sms-provider-stub)
+	@true
+
 .PHONY: up
 up:
-	${DC_ANTIVIRUS} docker compose ${DC_PROFILES} up
+	${DC_SMS_PROVIDER_STUB_MMG} ${DC_SMS_PROVIDER_STUB_FIRETEXT} ${DC_ANTIVIRUS} docker compose ${DC_PROFILES} up
 
 .PHONY: stop
-stop: beat antivirus
+stop: beat antivirus sms-provider-stub
 	docker compose ${DC_PROFILES} stop
 
 .PHONY: down
-down: beat antivirus
+down: beat antivirus sms-provider-stub
 	docker compose ${DC_PROFILES} down
