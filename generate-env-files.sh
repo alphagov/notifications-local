@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if [ -z "${PASSWORD_STORE_DIR}" ]; then
+if [ -n "$NOTIFY_CREDENTIALS" ]; then
+  export PASSWORD_STORE_DIR="$NOTIFY_CREDENTIALS"
+elif [ -z "$PASSWORD_STORE_DIR" ]; then
   echo -n "Enter the full path to your local checkout of \`notifications-credentials\`: "
   read PASSWORD_STORE_DIR
   export PASSWORD_STORE_DIR
