@@ -103,7 +103,7 @@ services:
       redis:
       db:
       apps:
- 
+
   notify-api-celery-beat:
     image: notifications-api
     container_name: notify-api-celery-beat
@@ -128,7 +128,7 @@ services:
       redis:
       db:
       apps:
- 
+
   notify-admin:
     image: notifications-admin
     container_name: notify-admin
@@ -186,7 +186,7 @@ services:
     networks:
       apps:
         aliases:
-          - document-download-api.localhost
+          - api.document-download.localhost
 
   document-download-frontend:
     image: document-download-frontend
@@ -209,7 +209,7 @@ services:
     networks:
       apps:
         aliases:
-          - document-download-frontend.localhost
+          - frontend.document-download.localhost
 
   template-preview-api:
     image: template-preview-api

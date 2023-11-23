@@ -22,8 +22,8 @@ This README needs some love and may not be in an intuitive order. Please read th
 
 3) Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository a helper script automates generating real .env into the `./private` directory files from those templates, prompting for input as required. These should obviously never be committed and is excluded in `.gitignore`.
 
-    You will need the full path of your checked-out credentials repository (cd to it and run `pwd`), your SQS queue prefix from `notifications-api/environment.sh`, and your AWS access key/secret key from `~/.aws/credentials` 
-  
+    You will need the full path of your checked-out credentials repository (cd to it and run `pwd`), your SQS queue prefix from `notifications-api/environment.sh`, and your AWS access key/secret key from `~/.aws/credentials`
+
     Run this script and follow the instructions:
     ```bash
     ./generate-env-files.sh
@@ -32,7 +32,7 @@ This README needs some love and may not be in an intuitive order. Please read th
 4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
     ```bash
-    echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
+    echo "127.0.0.1       notify.localhost notify-api.localhost api.document-download.localhost frontend.document-download.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
     ```
 
 5) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
@@ -61,8 +61,8 @@ Your GOV.UK Notify services are available at the following URLs:
  - notify-admin: `http://notify.localhost:6012`
  - template-preview-api: `http://template-preview-api.localhost:6013`
  - antivirus-api: `http://antivirus-api.localhost:6016`
- - document-download-frontend: `http://document-download-frontend.localhost:7001`
- - document-download-api: `http://document-download-api.localhost:7000`
+ - document-download-frontend: `http://frontend.document-download.localhost:7001`
+ - document-download-api: `http://api.document-download.localhost:7000`
 
 ## Debugging containers
 
@@ -85,10 +85,9 @@ For example, if you've added a breakpoint into one of the apps and you've trigge
 # Todo
 
 * Investigate antivirus-api slow startups
-* Get frontend assets hot rebuilding for notify-admin and document-download-frontend. Until then, you can run `docker exec -it notify-admin npm run build` for an ad-hoc recompile, or `docker exec -it notify-admin npm run watch` to spin up a long-lived watcher process. Optionally add a `-d` flag to detach from the process and leave it running it the background. 
+* Get frontend assets hot rebuilding for notify-admin and document-download-frontend. Until then, you can run `docker exec -it notify-admin npm run build` for an ad-hoc recompile, or `docker exec -it notify-admin npm run watch` to spin up a long-lived watcher process. Optionally add a `-d` flag to detach from the process and leave it running it the background.
 * Investigate amd/arm docker images for antivirus and template-preview
   * antivirus-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested        0.0s
   * template-preview-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested    0.0s
   * antivirus-api The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested           0.0s
   * template-preview-celery The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested 0.0s
-
