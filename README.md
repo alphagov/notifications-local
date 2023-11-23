@@ -32,7 +32,7 @@ This README needs some love and may not be in an intuitive order. Please read th
 4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
     ```bash
-    echo "127.0.0.1       notify.localhost notify-api.localhost document-download-api.localhost document-download-frontend.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
+    echo "127.0.0.1       notify.localhost notify-api.localhost api.document-download.localhost frontend.document-download.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
     ```
 
 5) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
