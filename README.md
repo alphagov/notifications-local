@@ -70,6 +70,22 @@ When running, the applications should all hot reload on code changes. This means
 
 **Importantly**, to detach you should enter the control sequence Ctrl-P Ctrl-Q, **not Ctrl-C** which will kill the Flask app.
 
+## Updating dependencies in the containers
+
+There is two ways you can update dependencies for a container.
+
+1. If the container is up and running, you can go into it and update dependencies from inside of it, like:
+
+```
+docker exec -it <container-name> make bootstrap
+```
+
+2. If the container is crashing, or you want to update dependencies while it's not running, you can use docker compose for it, like so:
+
+```
+docker compose build <container-name>
+```
+
 ## Useful docker aliases
 
 When using docker compose to run GOV.UK Notify, you may fairly frequently need to interact with the docker containers, and so typing out standard docker commands in full every time can get a bit repetitive. These may be some useful aliases to set up:
