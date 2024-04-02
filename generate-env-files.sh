@@ -23,14 +23,13 @@ export TMPL_AWS_SECRET_ACCESS_KEY="${TMPL_AWS_SECRET_ACCESS_KEY}"
 echo -n "Reading secrets from \`notifications-credentials\` ... "
 export TMPL_MMG_API_KEY=$(pass credentials/mmg | tail -n 6 | grep "API key" | cut -d" " -f3)
 export TMPL_FIRETEXT_API_KEY=$(pass credentials/firetext | tail -n 6 | grep "API key" | cut -d" " -f3)
-export TMPL_ZENDESK_API_KEY=$(pass credentials/preview/paas/environment-variables|grep ZENDESK_API_KEY|cut -d" " -f2|tr -d '"')
-
-export TMPL_NOTIFY_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_NOTIFY_ADMIN_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ADMIN_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_DOCUMENT_DOWNLOAD_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_API_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_TEMPLATE_PREVIEW_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep TEMPLATE_PREVIEW_SENTRY_DSN|cut -d" " -f2|tr -d '"')
-export TMPL_ANTIVIRUS_API_SENTRY_DSN=$(pass credentials/preview/paas/environment-variables|grep NOTIFICATIONS_ANTIVIRUS_SENTRY_DSN|cut -d" " -f2|tr -d '"')
+export TMPL_ZENDESK_API_KEY=$(pass credentials/preview/ssm/zendesk_api_key)
+export TMPL_NOTIFY_API_SENTRY_DSN=$(pass credentials/preview/ssm/notifications_api_sentry_dsn)
+export TMPL_NOTIFY_ADMIN_SENTRY_DSN=$(pass credentials/preview/ssm/notifications_admin_sentry_dsn)
+export TMPL_DOCUMENT_DOWNLOAD_API_SENTRY_DSN=$(pass credentials/preview/ssm/document_download_api_sentry_dsn)
+export TMPL_DOCUMENT_DOWNLOAD_FRONTEND_SENTRY_DSN=$(pass credentials/preview/ssm/document_download_frontend_sentry_dsn)
+export TMPL_TEMPLATE_PREVIEW_API_SENTRY_DSN=$(pass credentials/preview/ssm/template_preview_sentry_dsn)
+export TMPL_ANTIVIRUS_API_SENTRY_DSN=$(pass credentials/preview/ssm/notifications_antivirus_sentry_dsn)
 echo -e "Done.\n"
 
 mkdir -p private
