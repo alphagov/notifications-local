@@ -175,7 +175,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "7000:7000"
-    command: ["flask", "run", "-p", "7000", "--host", "0.0.0.0"]
+    command: ["web-local"]
     stdin_open: true
     tty: true
     env_file:
@@ -200,7 +200,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "7001:7001"
-    command: ["flask", "run", "-p", "7001", "--host", "0.0.0.0"]
+    command: ["web-local"]
     stdin_open: true
     tty: true
     env_file:
@@ -226,7 +226,7 @@ services:
         - BASE_IMAGE=base
     ports:
       - "6013:6013"
-    command: [ "flask", "run", "--host=0.0.0.0", "-p", "6013", "--debug" ]
+    command: [ "web-local" ]
     stdin_open: true
     tty: true
     environment:
