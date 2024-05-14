@@ -86,6 +86,10 @@ docker exec -it <container-name> make bootstrap
 docker compose build <container-name>
 ```
 
+## Troubleshooting
+
+If you encounter issues running the apps locally, visit [our troubleshooting manual](https://github.com/alphagov/notifications-manuals/wiki/Troubleshooting-notifications-local)
+
 ## Useful docker aliases
 
 When using docker compose to run GOV.UK Notify, you may fairly frequently need to interact with the docker containers, and so typing out standard docker commands in full every time can get a bit repetitive. These may be some useful aliases to set up:
