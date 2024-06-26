@@ -86,6 +86,15 @@ docker exec -it <container-name> make bootstrap
 docker compose build <container-name>
 ```
 
+### Installing your local version of notifications-utils
+
+We mount your local version of utils in our containers so you can install it locally if you need to:
+
+```
+docker exec -it <container-name> bash
+pip install -e ../utils
+```
+
 ## Troubleshooting
 
 If you encounter issues running the apps locally, visit [our troubleshooting manual](https://github.com/alphagov/notifications-manuals/wiki/Troubleshooting-notifications-local)
