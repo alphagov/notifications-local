@@ -182,7 +182,11 @@ services:
       - private/document-download-api.env
     environment:
       - ANTIVIRUS_ENABLED
+    depends_on:
+      redis:
+        condition: service_started
     networks:
+      redis:
       apps:
         aliases:
           - api.document-download.localhost
