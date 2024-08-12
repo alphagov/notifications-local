@@ -24,6 +24,10 @@ This README needs some love and may not be in an intuitive order. Please read th
 
     You will need the full path of your checked-out credentials repository (cd to it and run `pwd`), your SQS queue prefix from `notifications-api/environment.sh`, and your AWS access key/secret key from `~/.aws/credentials`
 
+    If you have not yet created notifications-api/environment.sh, firstly [set up your credentials repo](https://github.com/alphagov/notifications-credentials?tab=readme-ov-file#setting-up), then follow [the instructions to create your environment.sh here](https://github.com/alphagov/notifications-api?tab=readme-ov-file#environmentsh).
+
+    If you have not yet created your AWS access key/secret for local development, [follow the instructions here](https://github.com/alphagov/notifications-manuals/wiki/aws-accounts#set-up-local-development).
+
     Run this script and follow the instructions:
     ```bash
     ./generate-env-files.sh
@@ -63,6 +67,11 @@ Your GOV.UK Notify services are available at the following URLs:
  - antivirus-api: `http://antivirus-api.localhost:6016`
  - document-download-frontend: `http://frontend.document-download.localhost:7001`
  - document-download-api: `http://api.document-download.localhost:7000`
+
+If you find that the notify-admin url does not work properly (e.g. FileNotFound error, or otherwise complaining of missing static assets) then the dependencies may not have been installed properly. While the containers are up, run the following command to install the dependencies on notify-admin. Repeat this process for any other containers that are not functioning properly:
+```
+docker exec -it <container-name> make bootstrap
+```
 
 ## Debugging containers
 
