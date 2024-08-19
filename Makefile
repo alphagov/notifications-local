@@ -31,3 +31,8 @@ stop: beat antivirus sms-provider-stub
 .PHONY: down
 down: beat antivirus sms-provider-stub
 	docker compose ${DC_PROFILES} down
+
+.PHONY: generate-local-dev-db-fixtures
+generate-local-dev-db-fixtures:
+	docker exec -it notify-api flask command functional-test-fixtures
+	docker cp notify-api:/tmp/functional_test_env.sh ../notifications-functional-tests/environment_local.sh
