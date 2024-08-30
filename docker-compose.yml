@@ -5,7 +5,7 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     environment:
       - POSTGRES_DB=notification_api
       - POSTGRES_USER=notify
@@ -22,7 +22,7 @@ services:
     image: redis:6.2
     container_name: redis
     ports:
-      - "6380:6379"
+      - "127.0.0.1:6380:6379"
     networks:
       redis:
 
@@ -37,7 +37,7 @@ services:
       dockerfile: docker/Dockerfile
       target: test
     ports:
-      - "6011:6011"
+      - "127.0.0.1:6011:6011"
     command: ["api-local"]
     stdin_open: true
     tty: true
@@ -141,7 +141,7 @@ services:
       args:
         - NOTIFY_ENVIRONMENT=development
     ports:
-      - "6012:6012"
+      - "127.0.0.1:6012:6012"
     command: ["web-local"]
     stdin_open: true
     tty: true
@@ -173,7 +173,7 @@ services:
       args:
         - NOTIFY_ENVIRONMENT=development
     ports:
-      - "7000:7000"
+      - "127.0.0.1:7000:7000"
     command: ["web-local"]
     stdin_open: true
     tty: true
@@ -198,7 +198,7 @@ services:
       args:
         - NOTIFY_ENVIRONMENT=development
     ports:
-      - "7001:7001"
+      - "127.0.0.1:7001:7001"
     command: ["web-local"]
     stdin_open: true
     tty: true
@@ -224,7 +224,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
         - BASE_IMAGE=base
     ports:
-      - "6013:6013"
+      - "127.0.0.1:6013:6013"
     command: [ "web-local" ]
     stdin_open: true
     tty: true
@@ -268,7 +268,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
         - BASE_IMAGE=base
     ports:
-      - "6016:6016"
+      - "127.0.0.1:6016:6016"
     entrypoint: ["./scripts/run_app.sh"]
     stdin_open: true
     tty: true
@@ -317,7 +317,7 @@ services:
       context: ../notifications-sms-provider-stub
       dockerfile: docker/Dockerfile
     ports:
-      - "6300:6300"
+      - "127.0.0.1:6300:6300"
     stdin_open: true
     tty: true
     environment:
