@@ -222,7 +222,6 @@ services:
       target: test
       args:
         - NOTIFY_ENVIRONMENT=development
-        - BASE_IMAGE=base
     ports:
       - "127.0.0.1:6013:6013"
     command: [ "web-local" ]
@@ -266,7 +265,6 @@ services:
       target: test
       args:
         - NOTIFY_ENVIRONMENT=development
-        - BASE_IMAGE=base
     ports:
       - "127.0.0.1:6016:6016"
     entrypoint: ["./scripts/run_app.sh"]
@@ -295,7 +293,6 @@ services:
       target: test
       args:
         - NOTIFY_ENVIRONMENT=development
-        - BASE_IMAGE=base
     entrypoint: ["./scripts/run_celery.sh"]
     stdin_open: true
     tty: true
