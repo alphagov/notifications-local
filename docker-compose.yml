@@ -129,6 +129,7 @@ services:
       apps:
 
   notify-admin:
+    platform: linux/amd64
     image: notifications-admin
     container_name: notify-admin
     volumes:
@@ -188,6 +189,7 @@ services:
           - api.document-download.localhost
 
   document-download-frontend:
+    platform: linux/amd64
     image: document-download-frontend
     container_name: document-download-frontend
     volumes:
