@@ -46,7 +46,10 @@ services:
       - private/notify-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - NOTIFY_APP_NAME=api-web
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -78,6 +81,7 @@ services:
     networks:
       db:
 
+
   notify-api-celery:
     image: notifications-api
     container_name: notify-api-celery
@@ -92,6 +96,9 @@ services:
       - ANTIVIRUS_ENABLED
       - MMG_URL
       - FIRETEXT_URL
+      - NOTIFY_APP_NAME=api-worker
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -116,7 +123,10 @@ services:
       - private/local-aws-creds.env
       - private/notify-api.env
     environment:
+      - NOTIFY_APP_NAME=api-celery-beat
       - ANTIVIRUS_ENABLED
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -127,6 +137,7 @@ services:
       redis:
       db:
       apps:
+
 
   notify-admin:
     image: notifications-admin
@@ -151,6 +162,9 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - NOTIFY_APP_NAME=admin
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       notify-api:
         condition: service_started
@@ -182,6 +196,9 @@ services:
       - private/document-download-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - NOTIFY_APP_NAME=document-download-api
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     networks:
       apps:
         aliases:
@@ -205,6 +222,10 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/document-download-frontend.env
+    environment:
+      - NOTIFY_APP_NAME=document-download-frontend
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     networks:
       apps:
         aliases:
@@ -229,6 +250,9 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - NOTIFY_APP_NAME=template-preview-api
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
@@ -247,9 +271,14 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
+    environment:
+      - NOTIFY_APP_NAME=template-preview-worker
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     restart: always
     networks:
       apps:
+
 
   antivirus-api:
     image: antivirus-api
@@ -272,6 +301,9 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - NOTIFY_APP_NAME=antivirus-api
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
@@ -298,12 +330,16 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - NOTIFY_APP_NAME=antivirus-worker
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
     restart: always
     networks:
       apps:
+
 
   sms-provider-stub:
     image: sms-provider-stub
@@ -324,6 +360,59 @@ services:
       apps:
         aliases:
           - notify.localhost
+
+  otel-loadbalancer:
+    image: otel/opentelemetry-collector-contrib:latest
+    deploy:
+      mode: replicated
+      replicas: 2
+    profiles:
+      - otel-loadbalancer
+    volumes:
+      - ./otel_mapping_loadbalancer.yml:/etc/otel/config.yaml
+    stdin_open: true
+    tty: true
+    command: [ "--config", "/etc/otel/config.yaml" ]
+    networks:
+      apps:
+        aliases:
+          - otel-loadbalancer.localhost
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    deploy:
+      mode: replicated
+      replicas: ${OTEL_COLLECTOR_REPLICAS:-1}
+    profiles:
+      - otel-collector
+    volumes:
+      - ./otel_mapping.yml:/etc/otel/config.yaml
+    ports:
+      - "127.0.0.1:9090-9091:9090" # Prometheus exporter
+    stdin_open: true
+    tty: true
+    command: [ "--config", "/etc/otel/config.yaml" ]
+    networks:
+      apps:
+        aliases:
+          - otel-collector.localhost
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    container_name: jaeger
+    profiles:
+      - jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "5778:5778"
+      - "9411:9411"
+    restart: on-failure
+    networks:
+      apps:
+        aliases:
+          - jaeger.localhost
 
 networks:
   db:

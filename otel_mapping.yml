@@ -1,0 +1,96 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: notifications-api
+          scrape_interval: 10s
+          static_configs:
+            - targets: ['notify-api.localhost:6011']
+              labels:
+                  service: notifications-api
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:9090"
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+    # Adjust the endpoint as needed for your Prometheus server to scrape
+
+processors:
+  batch:
+  filter/simple:
+    error_mode: ignore
+    spans:
+      exclude:
+        match_type: strict
+        libraries:
+          - name: opentelemetry.instrumentation.wsgi
+
+connectors:
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms, 1s, 10s, 25s]
+      unit: "s"
+    dimensions:
+      - name: http.method # flask
+      - name: http.status_code # flask
+      - name: net.peer.name # db/redis
+      - name: celery.task_name # celery
+      - name: messaging.destination # celery
+    namespace: "spans"
+    exemplars:
+      enabled: true
+    dimensions_cache_size: 1000
+    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"
+    metrics_flush_interval: 15s
+    metrics_expiration: 5m
+    events:
+      enabled: true
+      dimensions:
+        - name: exception.type
+        - name: exception.message
+    resource_metrics_key_attributes:
+      - service.name
+      - telemetry.sdk.language
+      - telemetry.sdk.name
+
+  signaltometrics:
+    spans:
+      - name: span_duration
+        description: Span duration as exponential histogram
+        unit: us
+        #attributes: # categorize by attributes
+        #  - key: attribute.foo
+        exponential_histogram:
+          count: Int(AdjustedCount()) # Adjusted count here is calculated as a custom OTTL converter
+          value: Microseconds(end_time - start_time)
+    logs:
+      - description: Count of log records
+        name: logrecord_count
+        sum:
+          value: "1"
+
+service:
+  telemetry:
+    logs:
+      level: DEBUG
+  pipelines:
+    traces/metrics:
+      receivers: [otlp]
+      processors: [filter/simple, batch]
+      exporters: [spanmetrics]
+      #exporters: [signaltometrics]
+    traces/jaeger:
+      receivers: [otlp]
+      exporters: [otlp/jaeger]
+    metrics:
+      receivers: [otlp,spanmetrics]
+      #receivers: [signaltometrics]
+      exporters: [prometheus]
