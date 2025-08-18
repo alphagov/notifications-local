@@ -11,12 +11,13 @@ services:
       - POSTGRES_USER=notify
       - POSTGRES_PASSWORD=notify
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 5s
       timeout: 1s
       retries: 3
     networks:
       db:
+
 
   redis:
     image: redis:6.2
@@ -25,6 +26,7 @@ services:
       - "127.0.0.1:6380:6379"
     networks:
       redis:
+
 
   notify-api:
     image: notifications-api
@@ -38,7 +40,7 @@ services:
       target: test
     ports:
       - "127.0.0.1:6011:6011"
-    command: ["api-local"]
+    command: [ "api-local" ]
     stdin_open: true
     tty: true
     env_file:
@@ -46,7 +48,10 @@ services:
       - private/notify-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - NOTIFY_APP_NAME=api-web
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -68,7 +73,7 @@ services:
     container_name: db-migration
     volumes:
       - ../notifications-api:/home/vcap/app
-    command: ["migration"]
+    command: [ "migration" ]
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
@@ -78,13 +83,14 @@ services:
     networks:
       db:
 
+
   notify-api-celery:
     image: notifications-api
     container_name: notify-api-celery
     volumes:
       - ../notifications-api:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
-    command: ["worker"]
+    command: [ "worker" ]
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
@@ -92,6 +98,9 @@ services:
       - ANTIVIRUS_ENABLED
       - MMG_URL
       - FIRETEXT_URL
+      - NOTIFY_APP_NAME=api-worker
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -102,6 +111,7 @@ services:
       redis:
       db:
       apps:
+
 
   notify-api-celery-beat:
     image: notifications-api
@@ -111,12 +121,15 @@ services:
     volumes:
       - ../notifications-api:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
-    command: ["celery-beat"]
+    command: [ "celery-beat" ]
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
     environment:
+      - NOTIFY_APP_NAME=api-celery-beat
       - ANTIVIRUS_ENABLED
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       db:
         condition: service_healthy
@@ -128,12 +141,13 @@ services:
       db:
       apps:
 
+
   notify-admin:
-    image: notifications-admin
+    image: docker.io/library/notifications-admin:latest
     container_name: notify-admin
-    volumes:
-      - ../notifications-admin:/home/vcap/app
-      - ../notifications-utils:/home/vcap/utils
+    # volumes:
+    #   - ../notifications-admin:/home/vcap/app
+    #   - ../notifications-utils:/home/vcap/utils
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
@@ -142,7 +156,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "127.0.0.1:6012:6012"
-    command: ["web-local"]
+    command: [ "web-local" ]
     stdin_open: true
     tty: true
     env_file:
@@ -151,6 +165,9 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - NOTIFY_APP_NAME=admin
+      - OTEL_EXPORT_TYPE=${OTEL_EXPORT_TYPE:-none}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT:-none}
     depends_on:
       notify-api:
         condition: service_started
@@ -174,7 +191,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "127.0.0.1:7000:7000"
-    command: ["web-local"]
+    command: [ "web-local" ]
     stdin_open: true
     tty: true
     env_file:
@@ -199,7 +216,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "127.0.0.1:7001:7001"
-    command: ["web-local"]
+    command: [ "web-local" ]
     stdin_open: true
     tty: true
     env_file:
@@ -238,18 +255,19 @@ services:
           - template-preview-api.localhost
 
   template-preview-celery:
-    image: template-preview-api
+    image: docker.io/library/notifications-template-preview:latest
     container_name: template-preview-celery
     volumes:
       - ../notifications-template-preview:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
-    command: ["worker"]
+    command: [ "worker" ]
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
     restart: always
     networks:
       apps:
+
 
   antivirus-api:
     image: antivirus-api
@@ -267,7 +285,7 @@ services:
         - NOTIFY_ENVIRONMENT=development
     ports:
       - "127.0.0.1:6016:6016"
-    entrypoint: ["./scripts/run_app.sh"]
+    entrypoint: [ "./scripts/run_app.sh" ]
     stdin_open: true
     tty: true
     environment:
@@ -281,7 +299,7 @@ services:
           - antivirus-api.localhost
 
   antivirus-celery:
-    image: antivirus-api
+    image: docker.io/library/notifications-antivirus:latest
     container_name: antivirus-celery
     profiles:
       - antivirus
@@ -293,7 +311,7 @@ services:
       target: test
       args:
         - NOTIFY_ENVIRONMENT=development
-    entrypoint: ["./scripts/run_celery.sh"]
+    entrypoint: [ "./scripts/run_celery.sh" ]
     stdin_open: true
     tty: true
     environment:
@@ -304,6 +322,7 @@ services:
     restart: always
     networks:
       apps:
+
 
   sms-provider-stub:
     image: sms-provider-stub
@@ -324,6 +343,57 @@ services:
       apps:
         aliases:
           - notify.localhost
+
+  otel-loadbalancer:
+    image: otel/opentelemetry-collector-contrib:latest
+    deploy:
+      mode: replicated
+      replicas: 2
+    profiles:
+      - otel-loadbalancer
+    volumes:
+      - ./otel_mapping_loadbalancer.yml:/etc/otel/config.yaml
+    stdin_open: true
+    tty: true
+    command: [ "--config", "/etc/otel/config.yaml" ]
+    networks:
+      apps:
+        aliases:
+          - otel-loadbalancer.localhost
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    deploy:
+      mode: replicated
+      replicas: ${OTEL_COLLECTOR_REPLICAS:-1}
+    profiles:
+      - otel-collector
+    volumes:
+      - ./otel_mapping.yml:/etc/otel/config.yaml
+    ports:
+      - "127.0.0.1:9090-9091:9090" # Prometheus exporter
+    stdin_open: true
+    tty: true
+    command: [ "--config", "/etc/otel/config.yaml" ]
+    networks:
+      apps:
+        aliases:
+          - otel-collector.localhost
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "5778:5778"
+      - "9411:9411"
+    restart: on-failure
+    networks:
+      apps:
+        aliases:
+          - jaeger.localhost
 
 networks:
   db:
