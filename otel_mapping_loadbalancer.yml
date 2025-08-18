@@ -1,0 +1,30 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+
+exporters:
+  loadbalancing:
+    routing_key: "traceID"
+    protocol:
+      otlp:
+        timeout: 2s
+        tls:
+          insecure: true
+    resolver:
+      dns:
+        hostname: otel-collector
+        port: "4317"
+
+
+service:
+  pipelines:
+    traces:
+      receivers:
+        - otlp
+      processors: []
+      exporters:
+        - loadbalancing
