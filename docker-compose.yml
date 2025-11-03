@@ -4,12 +4,21 @@ services:
     container_name: db
     volumes:
       - ./data/db:/var/lib/postgresql/data
+      - ./db/init-replication.sh:/docker-entrypoint-initdb.d/init-replication.sh
     ports:
       - "127.0.0.1:5433:5432"
     environment:
       - POSTGRES_DB=notification_api
       - POSTGRES_USER=notify
       - POSTGRES_PASSWORD=notify
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "hot_standby=on"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 5s
