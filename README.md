@@ -132,4 +132,4 @@ For example, if you've added a breakpoint into one of the apps and you've trigge
 
 ## Licence
 
-Unless stated otherwise, the codebase is released under [the MIT License](LICENSE). This covers both the codebase and any sample code in the documentation.
+Unless stated otherwise, the codebase is released under [the MIT License](LICENCE). This covers both the codebase and any sample code in the documentation.
