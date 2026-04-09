@@ -120,6 +120,20 @@ alias de='docker exec -it'
 
 For example, if you've added a breakpoint into one of the apps and you've triggered it, instead of typing `docker attach notify-admin` you can type `da notify-admin`. Or if you want a shell inside of one of the app containers to run arbitrary commands - eg install local utils, re-build frontend assets, etc - you can run `de notify-admin bash` instead of `docker exec -it notify-admin bash`.
 
+## Debugging Redis locally
+
+To see the contents of your local redis container, run the following:
+
+For notify-api and notify-admin:
+```
+docker exec -it redis redis-cli
+```
+
+For document-download-api:
+```
+docker exec -it redis redis-cli -n 1
+```
+
 # Todo
 
 * Investigate antivirus-api slow startups

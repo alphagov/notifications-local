@@ -183,6 +183,7 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
     networks:
+      redis:
       apps:
         aliases:
           - api.document-download.localhost
