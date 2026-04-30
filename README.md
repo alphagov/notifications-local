@@ -134,6 +134,15 @@ For document-download-api:
 docker exec -it redis redis-cli -n 1
 ```
 
+## Updating and bootstrapping all repos
+
+Over time repositories tend to become outdated and the process of updating them one by one becomes tedious.
+The `update-and-bootstrap-repos.sh` script automatically does this for you. It will go through each repository, check whether it's on the main branch, and if it is, pull the latest changes and run `make bootstrap-with-docker`.
+
+```bash
+sh ./update-and-bootstrap-repos.sh
+```
+
 # Todo
 
 * Investigate antivirus-api slow startups
