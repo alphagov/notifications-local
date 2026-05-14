@@ -2,6 +2,11 @@ services:
   db:
     image: postgres:15-bullseye
     container_name: db
+    command: >
+      postgres
+        -c wal_level=logical
+        -c max_replication_slots=10
+        -c max_wal_senders=10
     volumes:
       - ./data/db:/var/lib/postgresql/data
     ports:
