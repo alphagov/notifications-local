@@ -1,6 +1,8 @@
 services:
   db:
-    image: postgres:15-bullseye
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: db
     command: >
       postgres
