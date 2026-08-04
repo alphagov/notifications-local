@@ -36,3 +36,11 @@ down: beat antivirus sms-provider-stub
 generate-local-dev-db-fixtures:
 	docker exec -it notify-api flask command functional-test-fixtures
 	docker cp notify-api:/tmp/functional_test_env.sh ../notifications-functional-tests/environment_local.sh
+
+.PHONY: update-repos
+update-repos:
+	sh ./update-and-bootstrap-repos.sh
+
+.PHONY: update-repos-and-build
+update-repos-and-build:
+	sh ./update-and-bootstrap-repos.sh --build
