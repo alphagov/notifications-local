@@ -20,7 +20,12 @@ This README needs some love and may not be in an intuitive order. Please read th
 
     Manually make sure that each of those repositories are on the `main` branch and on the latest commit.
 
-3) Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository a helper script automates generating real .env into the `./private` directory files from those templates, prompting for input as required. These should obviously never be committed and is excluded in `.gitignore`.
+3) Copy the fonts from the private assets repository into the template preview repository.
+    ```
+    cp ../notifications-private-assets/fonts/Arial.ttf ../notifications-template-preview/docker/
+    ```
+
+4) Each of the services needs to have some environment variables defined. We have template .env files in the root of the repository a helper script automates generating real .env into the `./private` directory files from those templates, prompting for input as required. These should obviously never be committed and is excluded in `.gitignore`.
 
     You will need the full path of your checked-out credentials repository (cd to it and run `pwd`), your SQS queue prefix from `notifications-api/environment.sh`, and your AWS access key/secret key from `~/.aws/credentials`
 
@@ -33,13 +38,13 @@ This README needs some love and may not be in an intuitive order. Please read th
     ./generate-env-files.sh
     ```
 
-4) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
+5) Update your `/etc/hosts` file to handle DNS resolution for our local hostnames:
 
     ```bash
     echo "127.0.0.1       notify.localhost notify-api.localhost api.document-download.localhost frontend.document-download.localhost template-preview-api.localhost antivirus-api.localhost" | sudo tee -a /etc/hosts
     ```
 
-5) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
+6) This step is only required if you are switching to running GOV.UK Notify via docker compose from the old way, where things were all run natively. To keep your local DB data, we need to copy it across to the docker DB service.
    1) Make sure local postgres service is running (on standard port 5432)
    2) Run `docker compose up -d db` to start docker postgres.
    3) Connect to docker's postgres with `psql postgresql://notify:notify@localhost:5433/postgres` and run:
@@ -49,7 +54,7 @@ This README needs some love and may not be in an intuitive order. Please read th
    5) If you login locally with yubikey, update your user's auth_type to email_auth temporarily: `psql postgresql://notify:notify@localhost:5433/notification_api -c "update users set auth_type='email_auth' where email_address='EMAIL_ADDRESS'"`
    6) Run `docker compose down`
 
-6) Run `docker compose build` to make sure all the containers have been built and are up-to-date.
+7) Run `docker compose build` to make sure all the containers have been built and are up-to-date.
 
 ## Running/accessing services
 
