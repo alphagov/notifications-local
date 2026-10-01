@@ -40,6 +40,7 @@ services:
     volumes:
       - ../notifications-api:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../notifications-api
       dockerfile: docker/Dockerfile
@@ -55,6 +56,7 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - PYTHONPATH=/opt/zscaler-fix
     depends_on:
       db:
         condition: service_healthy
@@ -92,6 +94,7 @@ services:
     volumes:
       - ../notifications-api:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     command: ["worker"]
     env_file:
       - private/local-aws-creds.env
@@ -100,6 +103,7 @@ services:
       - ANTIVIRUS_ENABLED
       - MMG_URL
       - FIRETEXT_URL
+      - PYTHONPATH=/opt/zscaler-fix
     depends_on:
       db:
         condition: service_healthy
@@ -119,12 +123,14 @@ services:
     volumes:
       - ../notifications-api:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     command: ["celery-beat"]
     env_file:
       - private/local-aws-creds.env
       - private/notify-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - PYTHONPATH=/opt/zscaler-fix
     depends_on:
       db:
         condition: service_healthy
@@ -142,6 +148,7 @@ services:
     volumes:
       - ../notifications-admin:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../notifications-admin
       dockerfile: docker/Dockerfile
@@ -159,6 +166,7 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - PYTHONPATH=/opt/zscaler-fix
     depends_on:
       notify-api:
         condition: service_started
@@ -175,6 +183,7 @@ services:
     container_name: document-download-api
     volumes:
       - ../document-download-api:/home/vcap/app
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../document-download-api
       dockerfile: docker/Dockerfile
@@ -190,6 +199,7 @@ services:
       - private/document-download-api.env
     environment:
       - ANTIVIRUS_ENABLED
+      - PYTHONPATH=/opt/zscaler-fix
     networks:
       redis:
       apps:
@@ -201,6 +211,7 @@ services:
     container_name: document-download-frontend
     volumes:
       - ../document-download-frontend:/home/vcap/app
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../document-download-frontend
       dockerfile: docker/Dockerfile
@@ -214,6 +225,8 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/document-download-frontend.env
+    environment:
+      - PYTHONPATH=/opt/zscaler-fix
     networks:
       apps:
         aliases:
@@ -225,6 +238,7 @@ services:
     volumes:
       - ../notifications-template-preview:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../notifications-template-preview
       dockerfile: docker/Dockerfile
@@ -238,6 +252,7 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - PYTHONPATH=/opt/zscaler-fix
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
@@ -252,10 +267,13 @@ services:
     volumes:
       - ../notifications-template-preview:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     command: ["worker"]
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
+    environment:
+      - PYTHONPATH=/opt/zscaler-fix
     restart: always
     networks:
       apps:
@@ -268,6 +286,7 @@ services:
     volumes:
       - ../notifications-antivirus:/home/vcap/app
       - ../notifications-utils:/home/vcap/utils
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../notifications-antivirus
       dockerfile: docker/Dockerfile
@@ -281,6 +300,7 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - PYTHONPATH=/opt/zscaler-fix
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
@@ -296,6 +316,7 @@ services:
       - antivirus
     volumes:
       - ../notifications-antivirus:/home/vcap/app
+      - ./docker/zscaler-fix:/opt/zscaler-fix:ro
     build:
       context: ../notifications-antivirus
       dockerfile: docker/Dockerfile
@@ -307,6 +328,7 @@ services:
     tty: true
     environment:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
+      - PYTHONPATH=/opt/zscaler-fix
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
