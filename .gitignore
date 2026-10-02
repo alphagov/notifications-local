@@ -3,3 +3,4 @@ data
 *.swp
 *.env
 private/
+*.pem

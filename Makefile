@@ -20,9 +20,33 @@ sms-provider-stub:
 	$(eval export DC_PROFILES=${DC_PROFILES} --profile sms-provider-stub)
 	@true
 
+ZSCALER_CERT=./docker/zscaler-fix/zscaler-root-ca.pem
+
+.PHONY: export-zscaler-cert
+export-zscaler-cert:
+	security find-certificate \
+		-c "Zscaler Root CA" \
+		-p \
+		/Library/Keychains/System.keychain \
+		> $(ZSCALER_CERT)
+
+.PHONY: verify-zscaler-cert
+verify-zscaler-cert:
+	openssl x509 \
+		-in $(ZSCALER_CERT) \
+		-noout \
+		-subject \
+		-issuer
+
+.PHONY: local-bootstrap
+local-bootstrap: export-zscaler-cert verify-zscaler-cert
+
 .PHONY: up
-up:
-	${DC_SMS_PROVIDER_STUB_MMG} ${DC_SMS_PROVIDER_STUB_FIRETEXT} ${DC_ANTIVIRUS} docker compose ${DC_PROFILES} up
+up: local-bootstrap
+	${DC_SMS_PROVIDER_STUB_MMG} \
+	${DC_SMS_PROVIDER_STUB_FIRETEXT} \
+	${DC_ANTIVIRUS} \
+	docker compose ${DC_PROFILES} up
 
 .PHONY: stop
 stop: beat antivirus sms-provider-stub
