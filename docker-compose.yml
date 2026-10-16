@@ -31,6 +31,9 @@ services:
     container_name: redis
     ports:
       - "127.0.0.1:6380:6379"
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       redis:
 
@@ -168,6 +171,8 @@ services:
       - FLASK_RUN_EXTRA_FILES=/opt/venv/
       - PYTHONPATH=/opt/zscaler-fix
     depends_on:
+      db:
+        condition: service_healthy
       notify-api:
         condition: service_started
       template-preview-api:
@@ -200,6 +205,9 @@ services:
     environment:
       - ANTIVIRUS_ENABLED
       - PYTHONPATH=/opt/zscaler-fix
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       redis:
       apps:
@@ -227,6 +235,9 @@ services:
       - private/document-download-frontend.env
     environment:
       - PYTHONPATH=/opt/zscaler-fix
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       apps:
         aliases:
@@ -256,6 +267,9 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/template-preview-api.env
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       apps:
         aliases:
@@ -274,6 +288,9 @@ services:
       - private/template-preview-api.env
     environment:
       - PYTHONPATH=/opt/zscaler-fix
+    depends_on:
+      db:
+        condition: service_healthy
     restart: always
     networks:
       apps:
@@ -304,6 +321,9 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       apps:
         aliases:
@@ -332,6 +352,9 @@ services:
     env_file:
       - private/local-aws-creds.env
       - private/antivirus-api.env
+    depends_on:
+      db:
+        condition: service_healthy
     restart: always
     networks:
       apps:
@@ -351,6 +374,9 @@ services:
     environment:
       - FIRETEXT_CALLBACK_URL=http://notify-api.localhost:6011/notifications/sms/firetext
       - MMG_CALLBACK_URL=http://notify-api.localhost:6011/notifications/sms/mmg
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       apps:
         aliases:
