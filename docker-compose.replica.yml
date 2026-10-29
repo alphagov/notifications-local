@@ -1,0 +1,28 @@
+services:
+  db-replica:
+    image: postgres:15-bullseye
+    container_name: db-replica
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      - PGUSER=notify
+      - PGPASSWORD=notify
+      - PGDATA=/var/lib/postgresql/data
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "
+        set -e
+        rm -rf /var/lib/postgresql/data/*
+        echo 'Waiting for primary database...'
+        until pg_isready -h db -U $${PGUSER}; do
+          sleep 1
+        done
+        echo 'Cloning primary database...'
+        pg_basebackup -h db -U $${PGUSER} -D /var/lib/postgresql/data -Fp -Xs -R
+        echo 'Starting replica...'
+        exec docker-entrypoint.sh postgres
+      "
+    networks:
+      - db
