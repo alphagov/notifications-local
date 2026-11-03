@@ -2,6 +2,10 @@
 # DC_ENV ?= ${DC_ENV}
 DC_ANTIVIRUS ?= ANTIVIRUS_ENABLED=0
 
+.PHONY: help
+help:
+	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
 .PHONY: beat
 beat:
 	$(eval export DC_PROFILES=${DC_PROFILES} --profile beat)
@@ -42,18 +46,18 @@ verify-zscaler-cert:
 local-bootstrap: export-zscaler-cert verify-zscaler-cert
 
 .PHONY: up
-up: local-bootstrap
+up: local-bootstrap ## Build and start containers after bootstrapping
 	${DC_SMS_PROVIDER_STUB_MMG} \
 	${DC_SMS_PROVIDER_STUB_FIRETEXT} \
 	${DC_ANTIVIRUS} \
 	docker compose ${DC_PROFILES} up
 
 .PHONY: stop
-stop: beat antivirus sms-provider-stub
+stop: beat antivirus sms-provider-stub ## Stop containers without tearing down compose set up
 	docker compose ${DC_PROFILES} stop
 
 .PHONY: down
-down: beat antivirus sms-provider-stub
+down: beat antivirus sms-provider-stub ## Stop containers and tear down docker compose set up
 	docker compose ${DC_PROFILES} down
 
 .PHONY: generate-local-dev-db-fixtures
@@ -66,5 +70,5 @@ update-repos:
 	sh ./update-and-bootstrap-repos.sh
 
 .PHONY: update-repos-and-build
-update-repos-and-build:
+update-repos-and-build: ## Pull repos and rebuild containers from them
 	sh ./update-and-bootstrap-repos.sh --build
