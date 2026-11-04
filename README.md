@@ -49,7 +49,17 @@ This README needs some love and may not be in an intuitive order. Please read th
    5) If you login locally with yubikey, update your user's auth_type to email_auth temporarily: `psql postgresql://notify:notify@localhost:5433/notification_api -c "update users set auth_type='email_auth' where email_address='EMAIL_ADDRESS'"`
    6) Run `docker compose down`
 
-6) Run `docker compose build` to make sure all the containers have been built and are up-to-date.
+6) There are two options to build and run the application
+
+    **Option A: Run with a single database (standard development)**
+    ```
+    docker compose up --build
+    ```
+    
+    **Option B: Run with the read-replica (for testing read/write splitting)**
+    ```
+    docker compose -f docker-compose.yml -f docker-compose.replica.yml up --build
+    ```
 
 ## Running/accessing services
 
